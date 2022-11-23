@@ -1,0 +1,2931 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Lucas-Miller-OIT/electrodynamics/blob/master/Final%20Project%20-%20Magnetic%20Field%20Plots\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "TfAjak0-qO4X"
+      },
+      "source": [
+        "# Final Project - Magnetic Field Plots\n",
+        "\n",
+        "Adapted from the Week 8 Colab notebook by Kole Pitts and Lucas Miller."
+      ],
+      "id": "TfAjak0-qO4X"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cP7zGK1PVPvZ"
+      },
+      "source": [
+        "# Install and Load Packages\n",
+        "\n",
+        "These are the commands we use to install FEniCSx, Gmsh, and **multiphenicsx**."
+      ],
+      "id": "cP7zGK1PVPvZ"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "7EUMPSN5-gkh",
+        "outputId": "8759ac1b-a844-476a-c157-7e4268fcccd7"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "--2022-11-23 23:19:03--  https://fem-on-colab.github.io/releases/gmsh-install.sh\n",
+            "Resolving fem-on-colab.github.io (fem-on-colab.github.io)... 185.199.108.153, 185.199.109.153, 185.199.110.153, ...\n",
+            "Connecting to fem-on-colab.github.io (fem-on-colab.github.io)|185.199.108.153|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 3405 (3.3K) [application/x-sh]\n",
+            "Saving to: ‘/tmp/gmsh-install.sh’\n",
+            "\n",
+            "\r/tmp/gmsh-install.s   0%[                    ]       0  --.-KB/s               \r/tmp/gmsh-install.s 100%[===================>]   3.33K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:19:03 (34.6 MB/s) - ‘/tmp/gmsh-install.sh’ saved [3405/3405]\n",
+            "\n",
+            "+ INSTALL_PREFIX=/usr/local\n",
+            "++ awk -F/ '{print NF-1}'\n",
+            "++ echo /usr/local\n",
+            "+ INSTALL_PREFIX_DEPTH=2\n",
+            "+ PROJECT_NAME=fem-on-colab\n",
+            "+ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+ GMSH_INSTALLED=/usr/local/share/fem-on-colab/gmsh.installed\n",
+            "+ [[ ! -f /usr/local/share/fem-on-colab/gmsh.installed ]]\n",
+            "+ H5PY_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh == http* ]]\n",
+            "+ H5PY_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh\n",
+            "+ H5PY_INSTALL_SCRIPT_PATH=/tmp/h5py-install.sh\n",
+            "+ [[ ! -f /tmp/h5py-install.sh ]]\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh -O /tmp/h5py-install.sh\n",
+            "--2022-11-23 23:19:03--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.113.3\n",
+            "Connecting to github.com (github.com)|140.82.113.3|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/3393a255349671b63d1180d31c4334d2501a8ef6/releases/h5py-install.sh [following]\n",
+            "--2022-11-23 23:19:03--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/3393a255349671b63d1180d31c4334d2501a8ef6/releases/h5py-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.108.133, 185.199.111.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1723 (1.7K) [text/plain]\n",
+            "Saving to: ‘/tmp/h5py-install.sh’\n",
+            "\n",
+            "/tmp/h5py-install.s 100%[===================>]   1.68K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:19:03 (20.6 MB/s) - ‘/tmp/h5py-install.sh’ saved [1723/1723]\n",
+            "\n",
+            "+ source /tmp/h5py-install.sh\n",
+            "++ set -e\n",
+            "++ set -x\n",
+            "++ INSTALL_PREFIX=/usr/local\n",
+            "+++ echo /usr/local\n",
+            "+++ awk -F/ '{print NF-1}'\n",
+            "++ INSTALL_PREFIX_DEPTH=2\n",
+            "++ PROJECT_NAME=fem-on-colab\n",
+            "++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++ H5PY_INSTALLED=/usr/local/share/fem-on-colab/h5py.installed\n",
+            "++ [[ ! -f /usr/local/share/fem-on-colab/h5py.installed ]]\n",
+            "++ MPI4PY_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh == http* ]]\n",
+            "++ MPI4PY_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh\n",
+            "++ MPI4PY_INSTALL_SCRIPT_PATH=/tmp/mpi4py-install.sh\n",
+            "++ [[ ! -f /tmp/mpi4py-install.sh ]]\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh -O /tmp/mpi4py-install.sh\n",
+            "--2022-11-23 23:19:04--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh\n",
+            "Resolving github.com (github.com)... 20.27.177.113\n",
+            "Connecting to github.com (github.com)|20.27.177.113|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/7b9324e67a4ae2585583239f89ae5d1e98b40686/releases/mpi4py-install.sh [following]\n",
+            "--2022-11-23 23:19:04--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/7b9324e67a4ae2585583239f89ae5d1e98b40686/releases/mpi4py-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 2337 (2.3K) [text/plain]\n",
+            "Saving to: ‘/tmp/mpi4py-install.sh’\n",
+            "\n",
+            "/tmp/mpi4py-install 100%[===================>]   2.28K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:19:05 (19.6 MB/s) - ‘/tmp/mpi4py-install.sh’ saved [2337/2337]\n",
+            "\n",
+            "++ source /tmp/mpi4py-install.sh\n",
+            "+++ set -e\n",
+            "+++ set -x\n",
+            "+++ INSTALL_PREFIX=/usr/local\n",
+            "++++ echo /usr/local\n",
+            "++++ awk -F/ '{print NF-1}'\n",
+            "+++ INSTALL_PREFIX_DEPTH=2\n",
+            "+++ PROJECT_NAME=fem-on-colab\n",
+            "+++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+++ MPI4PY_INSTALLED=/usr/local/share/fem-on-colab/mpi4py.installed\n",
+            "+++ [[ ! -f /usr/local/share/fem-on-colab/mpi4py.installed ]]\n",
+            "+++ GCC_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh\n",
+            "+++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh == http* ]]\n",
+            "+++ GCC_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh\n",
+            "+++ GCC_INSTALL_SCRIPT_PATH=/tmp/gcc-install.sh\n",
+            "+++ [[ ! -f /tmp/gcc-install.sh ]]\n",
+            "+++ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh -O /tmp/gcc-install.sh\n",
+            "--2022-11-23 23:19:05--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.112.3\n",
+            "Connecting to github.com (github.com)|140.82.112.3|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/ec167c214c13c8aff753641a8e86317e54054d66/releases/gcc-install.sh [following]\n",
+            "--2022-11-23 23:19:05--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/ec167c214c13c8aff753641a8e86317e54054d66/releases/gcc-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 5910 (5.8K) [text/plain]\n",
+            "Saving to: ‘/tmp/gcc-install.sh’\n",
+            "\n",
+            "/tmp/gcc-install.sh 100%[===================>]   5.77K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:19:05 (47.5 MB/s) - ‘/tmp/gcc-install.sh’ saved [5910/5910]\n",
+            "\n",
+            "+++ source /tmp/gcc-install.sh\n",
+            "++++ set -e\n",
+            "++++ set -x\n",
+            "++++ INSTALL_PREFIX=/usr/local\n",
+            "+++++ awk -F/ '{print NF-1}'\n",
+            "+++++ echo /usr/local\n",
+            "++++ INSTALL_PREFIX_DEPTH=2\n",
+            "++++ PROJECT_NAME=fem-on-colab\n",
+            "++++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++++ GCC_INSTALLED=/usr/local/share/fem-on-colab/gcc.installed\n",
+            "++++ [[ ! -f /usr/local/share/fem-on-colab/gcc.installed ]]\n",
+            "++++ GCC_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/gcc-20221104-093549-daccde0/gcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz\n",
+            "++++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/gcc-20221104-093549-daccde0/gcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz == http* ]]\n",
+            "++++ GCC_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/gcc-20221104-093549-daccde0/gcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz\n",
+            "++++ GCC_ARCHIVE_PATH=/tmp/gcc-install.tar.gz\n",
+            "++++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/gcc-20221104-093549-daccde0/gcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz -O /tmp/gcc-install.tar.gz\n",
+            "--2022-11-23 23:19:05--  https://github.com/fem-on-colab/fem-on-colab/releases/download/gcc-20221104-093549-daccde0/gcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz\n",
+            "Resolving github.com (github.com)... 140.82.112.4\n",
+            "Connecting to github.com (github.com)|140.82.112.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/8c19d114-810a-40b6-9b26-9b6030d5c94d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231905Z&X-Amz-Expires=300&X-Amz-Signature=d95458b3718c9d4e08a328b1ee391a3c0cffb5751a75929c4cca1ac2b875c2c9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dgcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:19:05--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/8c19d114-810a-40b6-9b26-9b6030d5c94d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231905Z&X-Amz-Expires=300&X-Amz-Signature=d95458b3718c9d4e08a328b1ee391a3c0cffb5751a75929c4cca1ac2b875c2c9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dgcc-install.tar-1af130de0d46f757df3ff67f25bfe54d.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 643706985 (614M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/gcc-install.tar.gz’\n",
+            "\n",
+            "/tmp/gcc-install.ta 100%[===================>] 613.89M  59.9MB/s    in 9.9s    \n",
+            "\n",
+            "2022-11-23 23:19:15 (62.2 MB/s) - ‘/tmp/gcc-install.tar.gz’ saved [643706985/643706985]\n",
+            "\n",
+            "++++ [[ /tmp/gcc-install.tar.gz != skip ]]\n",
+            "++++ tar -xzf /tmp/gcc-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++++ apt install -y -qq zlib1g-dev\n",
+            "zlib1g-dev is already the newest version (1:1.2.11.dfsg-0ubuntu2.2).\n",
+            "zlib1g-dev set to manually installed.\n",
+            "The following package was automatically installed and is no longer required:\n",
+            "  libnvidia-common-460\n",
+            "Use 'apt autoremove' to remove it.\n",
+            "0 upgraded, 0 newly installed, 0 to remove and 5 not upgraded.\n",
+            "++++ [[ /tmp/gcc-install.tar.gz != skip ]]\n",
+            "++++ for LEGACY_GPP in /usr/bin/g++-*\n",
+            "+++++ /usr/bin/g++-7 -dumpversion\n",
+            "++++ LEGACY_GCC_VERSION=7\n",
+            "++++ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 7\n",
+            "update-alternatives: using /usr/bin/g++-7 to provide /usr/bin/g++ (g++) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 7\n",
+            "update-alternatives: using /usr/bin/gcc-7 to provide /usr/bin/gcc (gcc) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc-ar gcc-ar /usr/bin/gcc-ar-7 7\n",
+            "update-alternatives: using /usr/bin/gcc-ar-7 to provide /usr/bin/gcc-ar (gcc-ar) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc-nm gcc-nm /usr/bin/gcc-nm-7 7\n",
+            "update-alternatives: using /usr/bin/gcc-nm-7 to provide /usr/bin/gcc-nm (gcc-nm) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-7 7\n",
+            "update-alternatives: using /usr/bin/gcc-ranlib-7 to provide /usr/bin/gcc-ranlib (gcc-ranlib) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-g++ x86_64-linux-gnu-g++ /usr/bin/x86_64-linux-gnu-g++-7 7\n",
+            "update-alternatives: using /usr/bin/x86_64-linux-gnu-g++-7 to provide /usr/bin/x86_64-linux-gnu-g++ (x86_64-linux-gnu-g++) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc x86_64-linux-gnu-gcc /usr/bin/x86_64-linux-gnu-gcc-7 7\n",
+            "update-alternatives: using /usr/bin/x86_64-linux-gnu-gcc-7 to provide /usr/bin/x86_64-linux-gnu-gcc (x86_64-linux-gnu-gcc) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc-ar x86_64-linux-gnu-gcc-ar /usr/bin/x86_64-linux-gnu-gcc-ar-7 7\n",
+            "update-alternatives: using /usr/bin/x86_64-linux-gnu-gcc-ar-7 to provide /usr/bin/x86_64-linux-gnu-gcc-ar (x86_64-linux-gnu-gcc-ar) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc-nm x86_64-linux-gnu-gcc-nm /usr/bin/x86_64-linux-gnu-gcc-nm-7 7\n",
+            "update-alternatives: using /usr/bin/x86_64-linux-gnu-gcc-nm-7 to provide /usr/bin/x86_64-linux-gnu-gcc-nm (x86_64-linux-gnu-gcc-nm) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc-ranlib x86_64-linux-gnu-gcc-ranlib /usr/bin/x86_64-linux-gnu-gcc-ranlib-7 7\n",
+            "update-alternatives: using /usr/bin/x86_64-linux-gnu-gcc-ranlib-7 to provide /usr/bin/x86_64-linux-gnu-gcc-ranlib (x86_64-linux-gnu-gcc-ranlib) in auto mode\n",
+            "+++++ /usr/local/bin/g++ -dumpversion\n",
+            "++++ GCC_VERSION=12\n",
+            "++++ update-alternatives --install /usr/bin/g++ g++ /usr/local/bin/g++-12 12\n",
+            "update-alternatives: using /usr/local/bin/g++-12 to provide /usr/bin/g++ (g++) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc gcc /usr/local/bin/gcc-12 12\n",
+            "update-alternatives: using /usr/local/bin/gcc-12 to provide /usr/bin/gcc (gcc) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc-ar gcc-ar /usr/local/bin/gcc-ar-12 12\n",
+            "update-alternatives: using /usr/local/bin/gcc-ar-12 to provide /usr/bin/gcc-ar (gcc-ar) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc-nm gcc-nm /usr/local/bin/gcc-nm-12 12\n",
+            "update-alternatives: using /usr/local/bin/gcc-nm-12 to provide /usr/bin/gcc-nm (gcc-nm) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gcc-ranlib gcc-ranlib /usr/local/bin/gcc-ranlib-12 12\n",
+            "update-alternatives: using /usr/local/bin/gcc-ranlib-12 to provide /usr/bin/gcc-ranlib (gcc-ranlib) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/gfortran gfortran /usr/local/bin/gfortran-12 12\n",
+            "update-alternatives: using /usr/local/bin/gfortran-12 to provide /usr/bin/gfortran (gfortran) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-g++ x86_64-linux-gnu-g++ /usr/local/bin/x86_64-linux-gnu-g++-12 12\n",
+            "update-alternatives: using /usr/local/bin/x86_64-linux-gnu-g++-12 to provide /usr/bin/x86_64-linux-gnu-g++ (x86_64-linux-gnu-g++) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc x86_64-linux-gnu-gcc /usr/local/bin/x86_64-linux-gnu-gcc-12 12\n",
+            "update-alternatives: using /usr/local/bin/x86_64-linux-gnu-gcc-12 to provide /usr/bin/x86_64-linux-gnu-gcc (x86_64-linux-gnu-gcc) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc-ar x86_64-linux-gnu-gcc-ar /usr/local/bin/x86_64-linux-gnu-gcc-ar-12 12\n",
+            "update-alternatives: using /usr/local/bin/x86_64-linux-gnu-gcc-ar-12 to provide /usr/bin/x86_64-linux-gnu-gcc-ar (x86_64-linux-gnu-gcc-ar) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc-nm x86_64-linux-gnu-gcc-nm /usr/local/bin/x86_64-linux-gnu-gcc-nm-12 12\n",
+            "update-alternatives: using /usr/local/bin/x86_64-linux-gnu-gcc-nm-12 to provide /usr/bin/x86_64-linux-gnu-gcc-nm (x86_64-linux-gnu-gcc-nm) in auto mode\n",
+            "++++ update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc-ranlib x86_64-linux-gnu-gcc-ranlib /usr/local/bin/x86_64-linux-gnu-gcc-ranlib-12 12\n",
+            "update-alternatives: using /usr/local/bin/x86_64-linux-gnu-gcc-ranlib-12 to provide /usr/bin/x86_64-linux-gnu-gcc-ranlib (x86_64-linux-gnu-gcc-ranlib) in auto mode\n",
+            "++++ update-alternatives --set g++ /usr/local/bin/g++-12\n",
+            "++++ update-alternatives --set gcc /usr/local/bin/gcc-12\n",
+            "++++ update-alternatives --set gcc-ar /usr/local/bin/gcc-ar-12\n",
+            "++++ update-alternatives --set gcc-nm /usr/local/bin/gcc-nm-12\n",
+            "++++ update-alternatives --set gcc-ranlib /usr/local/bin/gcc-ranlib-12\n",
+            "++++ update-alternatives --set gfortran /usr/local/bin/gfortran-12\n",
+            "++++ update-alternatives --set x86_64-linux-gnu-g++ /usr/local/bin/x86_64-linux-gnu-g++-12\n",
+            "++++ update-alternatives --set x86_64-linux-gnu-gcc /usr/local/bin/x86_64-linux-gnu-gcc-12\n",
+            "++++ update-alternatives --set x86_64-linux-gnu-gcc-ar /usr/local/bin/x86_64-linux-gnu-gcc-ar-12\n",
+            "++++ update-alternatives --set x86_64-linux-gnu-gcc-nm /usr/local/bin/x86_64-linux-gnu-gcc-nm-12\n",
+            "++++ update-alternatives --set x86_64-linux-gnu-gcc-ranlib /usr/local/bin/x86_64-linux-gnu-gcc-ranlib-12\n",
+            "++++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++++ touch /usr/local/share/fem-on-colab/gcc.installed\n",
+            "+++ MPI4PY_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/mpi4py-20221104-101208-daccde0/mpi4py-install.tar.gz\n",
+            "+++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/mpi4py-20221104-101208-daccde0/mpi4py-install.tar.gz == http* ]]\n",
+            "+++ MPI4PY_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/mpi4py-20221104-101208-daccde0/mpi4py-install.tar.gz\n",
+            "+++ MPI4PY_ARCHIVE_PATH=/tmp/mpi4py-install.tar.gz\n",
+            "+++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/mpi4py-20221104-101208-daccde0/mpi4py-install.tar.gz -O /tmp/mpi4py-install.tar.gz\n",
+            "--2022-11-23 23:19:42--  https://github.com/fem-on-colab/fem-on-colab/releases/download/mpi4py-20221104-101208-daccde0/mpi4py-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/6e7afc70-b8da-40d6-b00a-d8f43e3d8e24?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231942Z&X-Amz-Expires=300&X-Amz-Signature=9dbba6dede956117adf44d892da0c9acfad21bf7fea49bf15cd15f6603621c08&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dmpi4py-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:19:42--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/6e7afc70-b8da-40d6-b00a-d8f43e3d8e24?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231942Z&X-Amz-Expires=300&X-Amz-Signature=9dbba6dede956117adf44d892da0c9acfad21bf7fea49bf15cd15f6603621c08&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dmpi4py-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 8139097 (7.8M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/mpi4py-install.tar.gz’\n",
+            "\n",
+            "/tmp/mpi4py-install 100%[===================>]   7.76M  27.2MB/s    in 0.3s    \n",
+            "\n",
+            "2022-11-23 23:19:42 (27.2 MB/s) - ‘/tmp/mpi4py-install.tar.gz’ saved [8139097/8139097]\n",
+            "\n",
+            "+++ [[ /tmp/mpi4py-install.tar.gz != skip ]]\n",
+            "+++ tar -xzf /tmp/mpi4py-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "+++ [[ /tmp/mpi4py-install.tar.gz != skip ]]\n",
+            "+++ command -v mpicc\n",
+            "/usr/local/bin/mpicc\n",
+            "+++ [[ /tmp/mpi4py-install.tar.gz != skip ]]\n",
+            "+++ ln -fs /usr/local/lib/libmca_common_dstore.so /usr/local/lib/libmca_common_dstore.so.1 /usr/local/lib/libmca_common_dstore.so.1.0.2 /usr/local/lib/libmca_common_monitoring.so /usr/local/lib/libmca_common_monitoring.so.50 /usr/local/lib/libmca_common_monitoring.so.50.20.0 /usr/local/lib/libmca_common_ompio.so /usr/local/lib/libmca_common_ompio.so.41 /usr/local/lib/libmca_common_ompio.so.41.29.4 /usr/local/lib/libmca_common_sm.so /usr/local/lib/libmca_common_sm.so.40 /usr/local/lib/libmca_common_sm.so.40.30.0 /usr/local/lib/libmca_common_verbs.so /usr/local/lib/libmca_common_verbs.so.40 /usr/local/lib/libmca_common_verbs.so.40.30.0 /usr/lib\n",
+            "+++ ln -fs /usr/local/lib/libmpi_cxx.so /usr/local/lib/libmpi_cxx.so.40 /usr/local/lib/libmpi_cxx.so.40.30.1 /usr/local/lib/libmpi_mpifh.so /usr/local/lib/libmpi_mpifh.so.40 /usr/local/lib/libmpi_mpifh.so.40.30.0 /usr/local/lib/libmpi.so /usr/local/lib/libmpi.so.40 /usr/local/lib/libmpi.so.40.30.4 /usr/local/lib/libmpi_usempif08.so /usr/local/lib/libmpi_usempif08.so.40 /usr/local/lib/libmpi_usempif08.so.40.30.0 /usr/local/lib/libmpi_usempi_ignore_tkr.so /usr/local/lib/libmpi_usempi_ignore_tkr.so.40 /usr/local/lib/libmpi_usempi_ignore_tkr.so.40.30.0 /usr/lib\n",
+            "+++ ln -fs /usr/local/lib/libopen-pal.so /usr/local/lib/libopen-pal.so.40 /usr/local/lib/libopen-pal.so.40.30.2 /usr/local/lib/libopen-rte.so /usr/local/lib/libopen-rte.so.40 /usr/local/lib/libopen-rte.so.40.30.2 /usr/lib\n",
+            "+++ ln -fs /usr/local/lib/ompi_monitoring_prof.so /usr/lib\n",
+            "+++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "+++ touch /usr/local/share/fem-on-colab/mpi4py.installed\n",
+            "++ H5PY_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/h5py-20221104-103353-daccde0/h5py-install.tar.gz\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/h5py-20221104-103353-daccde0/h5py-install.tar.gz == http* ]]\n",
+            "++ H5PY_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/h5py-20221104-103353-daccde0/h5py-install.tar.gz\n",
+            "++ H5PY_ARCHIVE_PATH=/tmp/h5py-install.tar.gz\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/h5py-20221104-103353-daccde0/h5py-install.tar.gz -O /tmp/h5py-install.tar.gz\n",
+            "--2022-11-23 23:19:43--  https://github.com/fem-on-colab/fem-on-colab/releases/download/h5py-20221104-103353-daccde0/h5py-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/4a951e57-fb24-4a20-87d5-c885cf8c68a1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231943Z&X-Amz-Expires=300&X-Amz-Signature=3bf830c40073659720fe7c2e1467ad147ab1e1a85ae510f05b7f8fd853c3ca88&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dh5py-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:19:43--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/4a951e57-fb24-4a20-87d5-c885cf8c68a1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231943Z&X-Amz-Expires=300&X-Amz-Signature=3bf830c40073659720fe7c2e1467ad147ab1e1a85ae510f05b7f8fd853c3ca88&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dh5py-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.109.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 11854740 (11M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/h5py-install.tar.gz’\n",
+            "\n",
+            "/tmp/h5py-install.t 100%[===================>]  11.30M  50.3MB/s    in 0.2s    \n",
+            "\n",
+            "2022-11-23 23:19:43 (50.3 MB/s) - ‘/tmp/h5py-install.tar.gz’ saved [11854740/11854740]\n",
+            "\n",
+            "++ [[ /tmp/h5py-install.tar.gz != skip ]]\n",
+            "++ rm -rf '/usr/lib/python*/*-packages/h5py*'\n",
+            "++ rm -rf /usr/local/lib/python3.7/dist-packages/h5py /usr/local/lib/python3.7/dist-packages/h5py-3.1.0.dist-info /usr/local/lib/python3.7/dist-packages/h5py.libs\n",
+            "++ tar -xzf /tmp/h5py-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++ touch /usr/local/share/fem-on-colab/h5py.installed\n",
+            "+ OCC_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/9fc8d1a/releases/occ-install.sh\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/9fc8d1a/releases/occ-install.sh == http* ]]\n",
+            "+ OCC_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/9fc8d1a/releases/occ-install.sh\n",
+            "+ OCC_INSTALL_SCRIPT_PATH=/tmp/occ-install.sh\n",
+            "+ [[ ! -f /tmp/occ-install.sh ]]\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/9fc8d1a/releases/occ-install.sh -O /tmp/occ-install.sh\n",
+            "--2022-11-23 23:19:44--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/9fc8d1a/releases/occ-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/9fc8d1a8b6d30c8c0c7d01ce63432d8d3121f9d5/releases/occ-install.sh [following]\n",
+            "--2022-11-23 23:19:44--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/9fc8d1a8b6d30c8c0c7d01ce63432d8d3121f9d5/releases/occ-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 2157 (2.1K) [text/plain]\n",
+            "Saving to: ‘/tmp/occ-install.sh’\n",
+            "\n",
+            "/tmp/occ-install.sh 100%[===================>]   2.11K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:19:44 (24.6 MB/s) - ‘/tmp/occ-install.sh’ saved [2157/2157]\n",
+            "\n",
+            "+ source /tmp/occ-install.sh\n",
+            "++ set -e\n",
+            "++ set -x\n",
+            "++ INSTALL_PREFIX=/usr/local\n",
+            "+++ echo /usr/local\n",
+            "+++ awk -F/ '{print NF-1}'\n",
+            "++ INSTALL_PREFIX_DEPTH=2\n",
+            "++ PROJECT_NAME=fem-on-colab\n",
+            "++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++ OCC_INSTALLED=/usr/local/share/fem-on-colab/occ.installed\n",
+            "++ [[ ! -f /usr/local/share/fem-on-colab/occ.installed ]]\n",
+            "++ GCC_INSTALL_SCRIPT_PATH=/tmp/gcc-install.sh\n",
+            "++ [[ /tmp/gcc-install.sh == http* ]]\n",
+            "++ source /tmp/gcc-install.sh\n",
+            "+++ set -e\n",
+            "+++ set -x\n",
+            "+++ INSTALL_PREFIX=/usr/local\n",
+            "++++ echo /usr/local\n",
+            "++++ awk -F/ '{print NF-1}'\n",
+            "+++ INSTALL_PREFIX_DEPTH=2\n",
+            "+++ PROJECT_NAME=fem-on-colab\n",
+            "+++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+++ GCC_INSTALLED=/usr/local/share/fem-on-colab/gcc.installed\n",
+            "+++ [[ ! -f /usr/local/share/fem-on-colab/gcc.installed ]]\n",
+            "++ OCC_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/occ-20221104-101211-daccde0/occ-install.tar.gz\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/occ-20221104-101211-daccde0/occ-install.tar.gz == http* ]]\n",
+            "++ OCC_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/occ-20221104-101211-daccde0/occ-install.tar.gz\n",
+            "++ OCC_ARCHIVE_PATH=/tmp/occ-install.tar.gz\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/occ-20221104-101211-daccde0/occ-install.tar.gz -O /tmp/occ-install.tar.gz\n",
+            "--2022-11-23 23:19:44--  https://github.com/fem-on-colab/fem-on-colab/releases/download/occ-20221104-101211-daccde0/occ-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/b6810c7f-6e43-4fe8-8527-ff653cca3cc1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231944Z&X-Amz-Expires=300&X-Amz-Signature=cd87e5e1c6567b6afe04a93390ac3b14a400404dce375027b6071f8a4553a018&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Docc-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:19:44--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/b6810c7f-6e43-4fe8-8527-ff653cca3cc1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231944Z&X-Amz-Expires=300&X-Amz-Signature=cd87e5e1c6567b6afe04a93390ac3b14a400404dce375027b6071f8a4553a018&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Docc-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.111.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 32008171 (31M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/occ-install.tar.gz’\n",
+            "\n",
+            "/tmp/occ-install.ta 100%[===================>]  30.52M  97.7MB/s    in 0.3s    \n",
+            "\n",
+            "2022-11-23 23:19:45 (97.7 MB/s) - ‘/tmp/occ-install.tar.gz’ saved [32008171/32008171]\n",
+            "\n",
+            "++ [[ /tmp/occ-install.tar.gz != skip ]]\n",
+            "++ tar -xzf /tmp/occ-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++ [[ /tmp/occ-install.tar.gz != skip ]]\n",
+            "++ ln -fs /usr/local/lib/libTKBinL.so /usr/local/lib/libTKBinL.so.7 /usr/local/lib/libTKBinL.so.7.6.3 /usr/local/lib/libTKBin.so /usr/local/lib/libTKBin.so.7 /usr/local/lib/libTKBin.so.7.6.3 /usr/local/lib/libTKBinXCAF.so /usr/local/lib/libTKBinXCAF.so.7 /usr/local/lib/libTKBinXCAF.so.7.6.3 /usr/local/lib/libTKBool.so /usr/local/lib/libTKBool.so.7 /usr/local/lib/libTKBool.so.7.6.3 /usr/local/lib/libTKBO.so /usr/local/lib/libTKBO.so.7 /usr/local/lib/libTKBO.so.7.6.3 /usr/local/lib/libTKBRep.so /usr/local/lib/libTKBRep.so.7 /usr/local/lib/libTKBRep.so.7.6.3 /usr/local/lib/libTKCAF.so /usr/local/lib/libTKCAF.so.7 /usr/local/lib/libTKCAF.so.7.6.3 /usr/local/lib/libTKCDF.so /usr/local/lib/libTKCDF.so.7 /usr/local/lib/libTKCDF.so.7.6.3 /usr/local/lib/libTKernel.so /usr/local/lib/libTKernel.so.7 /usr/local/lib/libTKernel.so.7.6.3 /usr/local/lib/libTKFeat.so /usr/local/lib/libTKFeat.so.7 /usr/local/lib/libTKFeat.so.7.6.3 /usr/local/lib/libTKFillet.so /usr/local/lib/libTKFillet.so.7 /usr/local/lib/libTKFillet.so.7.6.3 /usr/local/lib/libTKG2d.so /usr/local/lib/libTKG2d.so.7 /usr/local/lib/libTKG2d.so.7.6.3 /usr/local/lib/libTKG3d.so /usr/local/lib/libTKG3d.so.7 /usr/local/lib/libTKG3d.so.7.6.3 /usr/local/lib/libTKGeomAlgo.so /usr/local/lib/libTKGeomAlgo.so.7 /usr/local/lib/libTKGeomAlgo.so.7.6.3 /usr/local/lib/libTKGeomBase.so /usr/local/lib/libTKGeomBase.so.7 /usr/local/lib/libTKGeomBase.so.7.6.3 /usr/local/lib/libTKHLR.so /usr/local/lib/libTKHLR.so.7 /usr/local/lib/libTKHLR.so.7.6.3 /usr/local/lib/libTKIGES.so /usr/local/lib/libTKIGES.so.7 /usr/local/lib/libTKIGES.so.7.6.3 /usr/local/lib/libTKLCAF.so /usr/local/lib/libTKLCAF.so.7 /usr/local/lib/libTKLCAF.so.7.6.3 /usr/local/lib/libTKMath.so /usr/local/lib/libTKMath.so.7 /usr/local/lib/libTKMath.so.7.6.3 /usr/local/lib/libTKMesh.so /usr/local/lib/libTKMesh.so.7 /usr/local/lib/libTKMesh.so.7.6.3 /usr/local/lib/libTKOffset.so /usr/local/lib/libTKOffset.so.7 /usr/local/lib/libTKOffset.so.7.6.3 /usr/local/lib/libTKPrim.so /usr/local/lib/libTKPrim.so.7 /usr/local/lib/libTKPrim.so.7.6.3 /usr/local/lib/libTKRWMesh.so /usr/local/lib/libTKRWMesh.so.7 /usr/local/lib/libTKRWMesh.so.7.6.3 /usr/local/lib/libTKService.so /usr/local/lib/libTKService.so.7 /usr/local/lib/libTKService.so.7.6.3 /usr/local/lib/libTKShHealing.so /usr/local/lib/libTKShHealing.so.7 /usr/local/lib/libTKShHealing.so.7.6.3 /usr/local/lib/libTKSTEP209.so /usr/local/lib/libTKSTEP209.so.7 /usr/local/lib/libTKSTEP209.so.7.6.3 /usr/local/lib/libTKSTEPAttr.so /usr/local/lib/libTKSTEPAttr.so.7 /usr/local/lib/libTKSTEPAttr.so.7.6.3 /usr/local/lib/libTKSTEPBase.so /usr/local/lib/libTKSTEPBase.so.7 /usr/local/lib/libTKSTEPBase.so.7.6.3 /usr/local/lib/libTKSTEP.so /usr/local/lib/libTKSTEP.so.7 /usr/local/lib/libTKSTEP.so.7.6.3 /usr/local/lib/libTKSTL.so /usr/local/lib/libTKSTL.so.7 /usr/local/lib/libTKSTL.so.7.6.3 /usr/local/lib/libTKTopAlgo.so /usr/local/lib/libTKTopAlgo.so.7 /usr/local/lib/libTKTopAlgo.so.7.6.3 /usr/local/lib/libTKV3d.so /usr/local/lib/libTKV3d.so.7 /usr/local/lib/libTKV3d.so.7.6.3 /usr/local/lib/libTKVCAF.so /usr/local/lib/libTKVCAF.so.7 /usr/local/lib/libTKVCAF.so.7.6.3 /usr/local/lib/libTKVRML.so /usr/local/lib/libTKVRML.so.7 /usr/local/lib/libTKVRML.so.7.6.3 /usr/local/lib/libTKXCAF.so /usr/local/lib/libTKXCAF.so.7 /usr/local/lib/libTKXCAF.so.7.6.3 /usr/local/lib/libTKXDEIGES.so /usr/local/lib/libTKXDEIGES.so.7 /usr/local/lib/libTKXDEIGES.so.7.6.3 /usr/local/lib/libTKXDESTEP.so /usr/local/lib/libTKXDESTEP.so.7 /usr/local/lib/libTKXDESTEP.so.7.6.3 /usr/local/lib/libTKXMesh.so /usr/local/lib/libTKXMesh.so.7 /usr/local/lib/libTKXMesh.so.7.6.3 /usr/local/lib/libTKXmlL.so /usr/local/lib/libTKXmlL.so.7 /usr/local/lib/libTKXmlL.so.7.6.3 /usr/local/lib/libTKXml.so /usr/local/lib/libTKXml.so.7 /usr/local/lib/libTKXml.so.7.6.3 /usr/local/lib/libTKXmlXCAF.so /usr/local/lib/libTKXmlXCAF.so.7 /usr/local/lib/libTKXmlXCAF.so.7.6.3 /usr/local/lib/libTKXSBase.so /usr/local/lib/libTKXSBase.so.7 /usr/local/lib/libTKXSBase.so.7.6.3 /usr/lib\n",
+            "++ [[ /tmp/occ-install.tar.gz != skip ]]\n",
+            "++ ln -fs /usr/local/include/opencascade /usr/include\n",
+            "++ apt install -y -qq libfontconfig1 libgl1\n",
+            "libfontconfig1 is already the newest version (2.12.6-0ubuntu2).\n",
+            "libfontconfig1 set to manually installed.\n",
+            "libgl1 is already the newest version (1.0.0-2ubuntu2.3).\n",
+            "The following package was automatically installed and is no longer required:\n",
+            "  libnvidia-common-460\n",
+            "Use 'apt autoremove' to remove it.\n",
+            "0 upgraded, 0 newly installed, 0 to remove and 5 not upgraded.\n",
+            "++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++ touch /usr/local/share/fem-on-colab/occ.installed\n",
+            "+ GMSH_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/gmsh-20221119-010135-ae2ea5c/gmsh-install.tar.gz\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/gmsh-20221119-010135-ae2ea5c/gmsh-install.tar.gz == http* ]]\n",
+            "+ GMSH_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/gmsh-20221119-010135-ae2ea5c/gmsh-install.tar.gz\n",
+            "+ GMSH_ARCHIVE_PATH=/tmp/gmsh-install.tar.gz\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/gmsh-20221119-010135-ae2ea5c/gmsh-install.tar.gz -O /tmp/gmsh-install.tar.gz\n",
+            "--2022-11-23 23:19:49--  https://github.com/fem-on-colab/fem-on-colab/releases/download/gmsh-20221119-010135-ae2ea5c/gmsh-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/d49e7abc-1f4c-4a91-b245-ba9edc719509?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231949Z&X-Amz-Expires=300&X-Amz-Signature=f0d46f684723fb60821395cb9b5ba339d1243f48158648815325ecbafa5d0f92&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dgmsh-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:19:49--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/d49e7abc-1f4c-4a91-b245-ba9edc719509?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T231949Z&X-Amz-Expires=300&X-Amz-Signature=f0d46f684723fb60821395cb9b5ba339d1243f48158648815325ecbafa5d0f92&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dgmsh-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 11890353 (11M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/gmsh-install.tar.gz’\n",
+            "\n",
+            "/tmp/gmsh-install.t 100%[===================>]  11.34M  48.3MB/s    in 0.2s    \n",
+            "\n",
+            "2022-11-23 23:19:49 (48.3 MB/s) - ‘/tmp/gmsh-install.tar.gz’ saved [11890353/11890353]\n",
+            "\n",
+            "+ [[ /tmp/gmsh-install.tar.gz != skip ]]\n",
+            "+ tar -xzf /tmp/gmsh-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "+ [[ /tmp/gmsh-install.tar.gz != skip ]]\n",
+            "+ ln -fs /usr/local/lib/libgmsh.so /usr/local/lib/libgmsh.so.4.11 /usr/local/lib/libgmsh.so.4.11.1 /usr/lib\n",
+            "+ mkdir -p /usr/local/share/fem-on-colab\n",
+            "+ touch /usr/local/share/fem-on-colab/gmsh.installed\n",
+            "+ set +x\n",
+            "################################################################################\n",
+            "#     This installation is offered by FEM on Colab, an open-source project     #\n",
+            "#       developed and maintained at Università Cattolica del Sacro Cuore       #\n",
+            "#    by Dr. Francesco Ballarin. Please see https://fem-on-colab.github.io/     #\n",
+            "#       for more details, including a list of further available packages       #\n",
+            "#                    and how to contribute to the project.                     #\n",
+            "#                                                                              #\n",
+            "#   We are conducting an informal survey on FEM on Colab usage by our users.   #\n",
+            "#   The survey is anonymous, and its compilation will typically only require   #\n",
+            "#   a couple of minutes of your time. If you wish, give us your feedback at    #\n",
+            "#                     https://forms.gle/36sZZWNvPpUv8XWr7                      #\n",
+            "################################################################################\n"
+          ]
+        }
+      ],
+      "source": [
+        "try:\n",
+        "    # Import gmsh library for generating meshes.\n",
+        "    import gmsh\n",
+        "except ImportError:\n",
+        "    # If it is not available, install it.  Then import it.\n",
+        "    !wget \"https://fem-on-colab.github.io/releases/gmsh-install.sh\" -O \"/tmp/gmsh-install.sh\" && bash \"/tmp/gmsh-install.sh\"\n",
+        "    import gmsh"
+      ],
+      "id": "7EUMPSN5-gkh"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "mediterranean-century",
+        "outputId": "b0abf28b-2d34-4e57-b8ea-2c89cc29ec6a"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "--2022-11-23 23:21:39--  https://fem-on-colab.github.io/releases/fenicsx-install-real.sh\n",
+            "Resolving fem-on-colab.github.io (fem-on-colab.github.io)... 185.199.111.153, 185.199.109.153, 185.199.108.153, ...\n",
+            "Connecting to fem-on-colab.github.io (fem-on-colab.github.io)|185.199.111.153|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 4252 (4.2K) [application/x-sh]\n",
+            "Saving to: ‘/tmp/fenicsx-install.sh’\n",
+            "\n",
+            "\r/tmp/fenicsx-instal   0%[                    ]       0  --.-KB/s               \r/tmp/fenicsx-instal 100%[===================>]   4.15K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:21:39 (30.9 MB/s) - ‘/tmp/fenicsx-install.sh’ saved [4252/4252]\n",
+            "\n",
+            "+ INSTALL_PREFIX=/usr/local\n",
+            "++ echo /usr/local\n",
+            "++ awk -F/ '{print NF-1}'\n",
+            "+ INSTALL_PREFIX_DEPTH=2\n",
+            "+ PROJECT_NAME=fem-on-colab\n",
+            "+ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+ FENICSX_INSTALLED=/usr/local/share/fem-on-colab/fenicsx.installed\n",
+            "+ [[ ! -f /usr/local/share/fem-on-colab/fenicsx.installed ]]\n",
+            "+ PYBIND11_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7ac5bbe/releases/pybind11-install.sh\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7ac5bbe/releases/pybind11-install.sh == http* ]]\n",
+            "+ PYBIND11_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7ac5bbe/releases/pybind11-install.sh\n",
+            "+ PYBIND11_INSTALL_SCRIPT_PATH=/tmp/pybind11-install.sh\n",
+            "+ [[ ! -f /tmp/pybind11-install.sh ]]\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7ac5bbe/releases/pybind11-install.sh -O /tmp/pybind11-install.sh\n",
+            "--2022-11-23 23:21:39--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7ac5bbe/releases/pybind11-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/7ac5bbed267198144012e3415b9d408a1fa8a5d6/releases/pybind11-install.sh [following]\n",
+            "--2022-11-23 23:21:40--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/7ac5bbed267198144012e3415b9d408a1fa8a5d6/releases/pybind11-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.109.133, 185.199.111.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.109.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1799 (1.8K) [text/plain]\n",
+            "Saving to: ‘/tmp/pybind11-install.sh’\n",
+            "\n",
+            "/tmp/pybind11-insta 100%[===================>]   1.76K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:21:40 (14.8 MB/s) - ‘/tmp/pybind11-install.sh’ saved [1799/1799]\n",
+            "\n",
+            "+ source /tmp/pybind11-install.sh\n",
+            "++ set -e\n",
+            "++ set -x\n",
+            "++ INSTALL_PREFIX=/usr/local\n",
+            "+++ echo /usr/local\n",
+            "+++ awk -F/ '{print NF-1}'\n",
+            "++ INSTALL_PREFIX_DEPTH=2\n",
+            "++ PROJECT_NAME=fem-on-colab\n",
+            "++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++ PYBIND11_INSTALLED=/usr/local/share/fem-on-colab/pybind11.installed\n",
+            "++ [[ ! -f /usr/local/share/fem-on-colab/pybind11.installed ]]\n",
+            "++ MPI4PY_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh == http* ]]\n",
+            "++ MPI4PY_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7b9324e/releases/mpi4py-install.sh\n",
+            "++ MPI4PY_INSTALL_SCRIPT_PATH=/tmp/mpi4py-install.sh\n",
+            "++ [[ ! -f /tmp/mpi4py-install.sh ]]\n",
+            "++ source /tmp/mpi4py-install.sh\n",
+            "+++ set -e\n",
+            "+++ set -x\n",
+            "+++ INSTALL_PREFIX=/usr/local\n",
+            "++++ echo /usr/local\n",
+            "++++ awk -F/ '{print NF-1}'\n",
+            "+++ INSTALL_PREFIX_DEPTH=2\n",
+            "+++ PROJECT_NAME=fem-on-colab\n",
+            "+++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+++ MPI4PY_INSTALLED=/usr/local/share/fem-on-colab/mpi4py.installed\n",
+            "+++ [[ ! -f /usr/local/share/fem-on-colab/mpi4py.installed ]]\n",
+            "++ PYBIND11_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/pybind11-20221105-184332-804badf/pybind11-install.tar.gz\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/pybind11-20221105-184332-804badf/pybind11-install.tar.gz == http* ]]\n",
+            "++ PYBIND11_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/pybind11-20221105-184332-804badf/pybind11-install.tar.gz\n",
+            "++ PYBIND11_ARCHIVE_PATH=/tmp/pybind11-install.tar.gz\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/pybind11-20221105-184332-804badf/pybind11-install.tar.gz -O /tmp/pybind11-install.tar.gz\n",
+            "--2022-11-23 23:21:40--  https://github.com/fem-on-colab/fem-on-colab/releases/download/pybind11-20221105-184332-804badf/pybind11-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/e0180e72-aa07-47a4-b3aa-5f388d794e1c?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232140Z&X-Amz-Expires=300&X-Amz-Signature=1dff7e66b565b451e03f425f074c901239a55790efa62d9f369753ab2bfd8179&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dpybind11-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:21:40--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/e0180e72-aa07-47a4-b3aa-5f388d794e1c?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232140Z&X-Amz-Expires=300&X-Amz-Signature=1dff7e66b565b451e03f425f074c901239a55790efa62d9f369753ab2bfd8179&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dpybind11-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 387612 (379K) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/pybind11-install.tar.gz’\n",
+            "\n",
+            "/tmp/pybind11-insta 100%[===================>] 378.53K  --.-KB/s    in 0.05s   \n",
+            "\n",
+            "2022-11-23 23:21:41 (6.84 MB/s) - ‘/tmp/pybind11-install.tar.gz’ saved [387612/387612]\n",
+            "\n",
+            "++ [[ /tmp/pybind11-install.tar.gz != skip ]]\n",
+            "++ rm -rf '/usr/lib/python*/*-packages/pybind11*'\n",
+            "++ rm -rf '/usr/local/lib/python*/*-packages/pybind11*'\n",
+            "++ tar -xzf /tmp/pybind11-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++ touch /usr/local/share/fem-on-colab/pybind11.installed\n",
+            "+ BOOST_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/c9e4649/releases/boost-install.sh\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/c9e4649/releases/boost-install.sh == http* ]]\n",
+            "+ BOOST_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/c9e4649/releases/boost-install.sh\n",
+            "+ BOOST_INSTALL_SCRIPT_PATH=/tmp/boost-install.sh\n",
+            "+ [[ ! -f /tmp/boost-install.sh ]]\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/c9e4649/releases/boost-install.sh -O /tmp/boost-install.sh\n",
+            "--2022-11-23 23:21:41--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/c9e4649/releases/boost-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.114.4\n",
+            "Connecting to github.com (github.com)|140.82.114.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/c9e464951e9b6a62ec06e690e47b3003d0aff13a/releases/boost-install.sh [following]\n",
+            "--2022-11-23 23:21:41--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/c9e464951e9b6a62ec06e690e47b3003d0aff13a/releases/boost-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.111.133, 185.199.109.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1855 (1.8K) [text/plain]\n",
+            "Saving to: ‘/tmp/boost-install.sh’\n",
+            "\n",
+            "/tmp/boost-install. 100%[===================>]   1.81K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:21:41 (26.8 MB/s) - ‘/tmp/boost-install.sh’ saved [1855/1855]\n",
+            "\n",
+            "+ source /tmp/boost-install.sh\n",
+            "++ set -e\n",
+            "++ set -x\n",
+            "++ INSTALL_PREFIX=/usr/local\n",
+            "+++ echo /usr/local\n",
+            "+++ awk -F/ '{print NF-1}'\n",
+            "++ INSTALL_PREFIX_DEPTH=2\n",
+            "++ PROJECT_NAME=fem-on-colab\n",
+            "++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++ BOOST_INSTALLED=/usr/local/share/fem-on-colab/boost.installed\n",
+            "++ [[ ! -f /usr/local/share/fem-on-colab/boost.installed ]]\n",
+            "++ GCC_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh == http* ]]\n",
+            "++ GCC_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/ec167c2/releases/gcc-install.sh\n",
+            "++ GCC_INSTALL_SCRIPT_PATH=/tmp/gcc-install.sh\n",
+            "++ [[ ! -f /tmp/gcc-install.sh ]]\n",
+            "++ source /tmp/gcc-install.sh\n",
+            "+++ set -e\n",
+            "+++ set -x\n",
+            "+++ INSTALL_PREFIX=/usr/local\n",
+            "++++ echo /usr/local\n",
+            "++++ awk -F/ '{print NF-1}'\n",
+            "+++ INSTALL_PREFIX_DEPTH=2\n",
+            "+++ PROJECT_NAME=fem-on-colab\n",
+            "+++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+++ GCC_INSTALLED=/usr/local/share/fem-on-colab/gcc.installed\n",
+            "+++ [[ ! -f /usr/local/share/fem-on-colab/gcc.installed ]]\n",
+            "++ BOOST_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/boost-20221104-101234-daccde0/boost-install.tar.gz\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/boost-20221104-101234-daccde0/boost-install.tar.gz == http* ]]\n",
+            "++ BOOST_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/boost-20221104-101234-daccde0/boost-install.tar.gz\n",
+            "++ BOOST_ARCHIVE_PATH=/tmp/boost-install.tar.gz\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/boost-20221104-101234-daccde0/boost-install.tar.gz -O /tmp/boost-install.tar.gz\n",
+            "--2022-11-23 23:21:41--  https://github.com/fem-on-colab/fem-on-colab/releases/download/boost-20221104-101234-daccde0/boost-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.113.3\n",
+            "Connecting to github.com (github.com)|140.82.113.3|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/8c654c6d-0a61-4d44-b0af-eac75e619f5b?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232141Z&X-Amz-Expires=300&X-Amz-Signature=9187fedd61e5f80ec306aac4bad203eb6e9439e43ced5c1b1d90f505a76dcd24&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dboost-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:21:41--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/8c654c6d-0a61-4d44-b0af-eac75e619f5b?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232141Z&X-Amz-Expires=300&X-Amz-Signature=9187fedd61e5f80ec306aac4bad203eb6e9439e43ced5c1b1d90f505a76dcd24&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dboost-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 90919525 (87M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/boost-install.tar.gz’\n",
+            "\n",
+            "/tmp/boost-install. 100%[===================>]  86.71M  54.2MB/s    in 1.6s    \n",
+            "\n",
+            "2022-11-23 23:21:43 (54.2 MB/s) - ‘/tmp/boost-install.tar.gz’ saved [90919525/90919525]\n",
+            "\n",
+            "++ [[ /tmp/boost-install.tar.gz != skip ]]\n",
+            "++ tar -xzf /tmp/boost-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++ [[ /tmp/boost-install.tar.gz != skip ]]\n",
+            "++ ln -fs /usr/local/lib/libboost_atomic.so /usr/local/lib/libboost_atomic.so.1.80.0 /usr/local/lib/libboost_chrono.so /usr/local/lib/libboost_chrono.so.1.80.0 /usr/local/lib/libboost_container.so /usr/local/lib/libboost_container.so.1.80.0 /usr/local/lib/libboost_context.so /usr/local/lib/libboost_context.so.1.80.0 /usr/local/lib/libboost_contract.so /usr/local/lib/libboost_contract.so.1.80.0 /usr/local/lib/libboost_coroutine.so /usr/local/lib/libboost_coroutine.so.1.80.0 /usr/local/lib/libboost_date_time.so /usr/local/lib/libboost_date_time.so.1.80.0 /usr/local/lib/libboost_fiber.so /usr/local/lib/libboost_fiber.so.1.80.0 /usr/local/lib/libboost_filesystem.so /usr/local/lib/libboost_filesystem.so.1.80.0 /usr/local/lib/libboost_graph.so /usr/local/lib/libboost_graph.so.1.80.0 /usr/local/lib/libboost_iostreams.so /usr/local/lib/libboost_iostreams.so.1.80.0 /usr/local/lib/libboost_json.a /usr/local/lib/libboost_json.so /usr/local/lib/libboost_json.so.1.80.0 /usr/local/lib/libboost_log_setup.so /usr/local/lib/libboost_log_setup.so.1.80.0 /usr/local/lib/libboost_log.so /usr/local/lib/libboost_log.so.1.80.0 /usr/local/lib/libboost_math_c99f.so /usr/local/lib/libboost_math_c99f.so.1.80.0 /usr/local/lib/libboost_math_c99l.so /usr/local/lib/libboost_math_c99l.so.1.80.0 /usr/local/lib/libboost_math_c99.so /usr/local/lib/libboost_math_c99.so.1.80.0 /usr/local/lib/libboost_math_tr1f.so /usr/local/lib/libboost_math_tr1f.so.1.80.0 /usr/local/lib/libboost_math_tr1l.so /usr/local/lib/libboost_math_tr1l.so.1.80.0 /usr/local/lib/libboost_math_tr1.so /usr/local/lib/libboost_math_tr1.so.1.80.0 /usr/local/lib/libboost_nowide.so /usr/local/lib/libboost_nowide.so.1.80.0 /usr/local/lib/libboost_numpy37.so /usr/local/lib/libboost_numpy37.so.1.80.0 /usr/local/lib/libboost_prg_exec_monitor.so /usr/local/lib/libboost_prg_exec_monitor.so.1.80.0 /usr/local/lib/libboost_program_options.so /usr/local/lib/libboost_program_options.so.1.80.0 /usr/local/lib/libboost_python37.so /usr/local/lib/libboost_python37.so.1.80.0 /usr/local/lib/libboost_random.so /usr/local/lib/libboost_random.so.1.80.0 /usr/local/lib/libboost_regex.so /usr/local/lib/libboost_regex.so.1.80.0 /usr/local/lib/libboost_serialization.so /usr/local/lib/libboost_serialization.so.1.80.0 /usr/local/lib/libboost_stacktrace_addr2line.so /usr/local/lib/libboost_stacktrace_addr2line.so.1.80.0 /usr/local/lib/libboost_stacktrace_basic.so /usr/local/lib/libboost_stacktrace_basic.so.1.80.0 /usr/local/lib/libboost_stacktrace_noop.so /usr/local/lib/libboost_stacktrace_noop.so.1.80.0 /usr/local/lib/libboost_system.so /usr/local/lib/libboost_system.so.1.80.0 /usr/local/lib/libboost_thread.so /usr/local/lib/libboost_thread.so.1.80.0 /usr/local/lib/libboost_timer.so /usr/local/lib/libboost_timer.so.1.80.0 /usr/local/lib/libboost_type_erasure.so /usr/local/lib/libboost_type_erasure.so.1.80.0 /usr/local/lib/libboost_unit_test_framework.so /usr/local/lib/libboost_unit_test_framework.so.1.80.0 /usr/local/lib/libboost_url.so /usr/local/lib/libboost_url.so.1.80.0 /usr/local/lib/libboost_wave.so /usr/local/lib/libboost_wave.so.1.80.0 /usr/local/lib/libboost_wserialization.so /usr/local/lib/libboost_wserialization.so.1.80.0 /usr/lib\n",
+            "++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++ touch /usr/local/share/fem-on-colab/boost.installed\n",
+            "+ SLEPC4PY_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/4d35043/releases/slepc4py-install-real.sh\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/4d35043/releases/slepc4py-install-real.sh == http* ]]\n",
+            "+ SLEPC4PY_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/4d35043/releases/slepc4py-install-real.sh\n",
+            "+ SLEPC4PY_INSTALL_SCRIPT_PATH=/tmp/slepc4py-install.sh\n",
+            "+ [[ ! -f /tmp/slepc4py-install.sh ]]\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/4d35043/releases/slepc4py-install-real.sh -O /tmp/slepc4py-install.sh\n",
+            "--2022-11-23 23:21:47--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/4d35043/releases/slepc4py-install-real.sh\n",
+            "Resolving github.com (github.com)... 140.82.112.3\n",
+            "Connecting to github.com (github.com)|140.82.112.3|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/4d3504355908377e54c1d7a1d0e7cd5ae59bdffa/releases/slepc4py-install-real.sh [following]\n",
+            "--2022-11-23 23:21:48--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/4d3504355908377e54c1d7a1d0e7cd5ae59bdffa/releases/slepc4py-install-real.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1741 (1.7K) [text/plain]\n",
+            "Saving to: ‘/tmp/slepc4py-install.sh’\n",
+            "\n",
+            "/tmp/slepc4py-insta 100%[===================>]   1.70K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:21:48 (19.1 MB/s) - ‘/tmp/slepc4py-install.sh’ saved [1741/1741]\n",
+            "\n",
+            "+ source /tmp/slepc4py-install.sh\n",
+            "++ set -e\n",
+            "++ set -x\n",
+            "++ INSTALL_PREFIX=/usr/local\n",
+            "+++ echo /usr/local\n",
+            "+++ awk -F/ '{print NF-1}'\n",
+            "++ INSTALL_PREFIX_DEPTH=2\n",
+            "++ PROJECT_NAME=fem-on-colab\n",
+            "++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++ SLEPC4PY_INSTALLED=/usr/local/share/fem-on-colab/slepc4py.installed\n",
+            "++ [[ ! -f /usr/local/share/fem-on-colab/slepc4py.installed ]]\n",
+            "++ PETSC4PY_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7e6f5e2/releases/petsc4py-install-real.sh\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7e6f5e2/releases/petsc4py-install-real.sh == http* ]]\n",
+            "++ PETSC4PY_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7e6f5e2/releases/petsc4py-install-real.sh\n",
+            "++ PETSC4PY_INSTALL_SCRIPT_PATH=/tmp/petsc4py-install.sh\n",
+            "++ [[ ! -f /tmp/petsc4py-install.sh ]]\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7e6f5e2/releases/petsc4py-install-real.sh -O /tmp/petsc4py-install.sh\n",
+            "--2022-11-23 23:21:48--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/7e6f5e2/releases/petsc4py-install-real.sh\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/7e6f5e2c701280177a47c0a6a4df35cd3dbaf498/releases/petsc4py-install-real.sh [following]\n",
+            "--2022-11-23 23:21:48--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/7e6f5e2c701280177a47c0a6a4df35cd3dbaf498/releases/petsc4py-install-real.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1793 (1.8K) [text/plain]\n",
+            "Saving to: ‘/tmp/petsc4py-install.sh’\n",
+            "\n",
+            "/tmp/petsc4py-insta 100%[===================>]   1.75K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:21:48 (16.8 MB/s) - ‘/tmp/petsc4py-install.sh’ saved [1793/1793]\n",
+            "\n",
+            "++ source /tmp/petsc4py-install.sh\n",
+            "+++ set -e\n",
+            "+++ set -x\n",
+            "+++ INSTALL_PREFIX=/usr/local\n",
+            "++++ echo /usr/local\n",
+            "++++ awk -F/ '{print NF-1}'\n",
+            "+++ INSTALL_PREFIX_DEPTH=2\n",
+            "+++ PROJECT_NAME=fem-on-colab\n",
+            "+++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+++ PETSC4PY_INSTALLED=/usr/local/share/fem-on-colab/petsc4py.installed\n",
+            "+++ [[ ! -f /usr/local/share/fem-on-colab/petsc4py.installed ]]\n",
+            "+++ H5PY_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh\n",
+            "+++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh == http* ]]\n",
+            "+++ H5PY_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/3393a25/releases/h5py-install.sh\n",
+            "+++ H5PY_INSTALL_SCRIPT_PATH=/tmp/h5py-install.sh\n",
+            "+++ [[ ! -f /tmp/h5py-install.sh ]]\n",
+            "+++ source /tmp/h5py-install.sh\n",
+            "++++ set -e\n",
+            "++++ set -x\n",
+            "++++ INSTALL_PREFIX=/usr/local\n",
+            "+++++ echo /usr/local\n",
+            "+++++ awk -F/ '{print NF-1}'\n",
+            "++++ INSTALL_PREFIX_DEPTH=2\n",
+            "++++ PROJECT_NAME=fem-on-colab\n",
+            "++++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++++ H5PY_INSTALLED=/usr/local/share/fem-on-colab/h5py.installed\n",
+            "++++ [[ ! -f /usr/local/share/fem-on-colab/h5py.installed ]]\n",
+            "+++ apt install -y -qq libblas-dev liblapack-dev\n",
+            "libblas-dev is already the newest version (3.7.1-4ubuntu1).\n",
+            "libblas-dev set to manually installed.\n",
+            "liblapack-dev is already the newest version (3.7.1-4ubuntu1).\n",
+            "The following package was automatically installed and is no longer required:\n",
+            "  libnvidia-common-460\n",
+            "Use 'apt autoremove' to remove it.\n",
+            "0 upgraded, 0 newly installed, 0 to remove and 5 not upgraded.\n",
+            "+++ PETSC4PY_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/petsc4py-20221104-105052-daccde0-real/petsc4py-install.tar.gz\n",
+            "+++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/petsc4py-20221104-105052-daccde0-real/petsc4py-install.tar.gz == http* ]]\n",
+            "+++ PETSC4PY_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/petsc4py-20221104-105052-daccde0-real/petsc4py-install.tar.gz\n",
+            "+++ PETSC4PY_ARCHIVE_PATH=/tmp/petsc4py-install.tar.gz\n",
+            "+++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/petsc4py-20221104-105052-daccde0-real/petsc4py-install.tar.gz -O /tmp/petsc4py-install.tar.gz\n",
+            "--2022-11-23 23:21:51--  https://github.com/fem-on-colab/fem-on-colab/releases/download/petsc4py-20221104-105052-daccde0-real/petsc4py-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/1c6fa210-cf4b-4241-8fdc-6f8e671663b5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232151Z&X-Amz-Expires=300&X-Amz-Signature=e83b8bebf0e3579b1c1aaaa0ff2dc91ba13a8a7533e3d58b1f57309fa468df1b&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dpetsc4py-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:21:51--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/1c6fa210-cf4b-4241-8fdc-6f8e671663b5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232151Z&X-Amz-Expires=300&X-Amz-Signature=e83b8bebf0e3579b1c1aaaa0ff2dc91ba13a8a7533e3d58b1f57309fa468df1b&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dpetsc4py-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 167304062 (160M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/petsc4py-install.tar.gz’\n",
+            "\n",
+            "/tmp/petsc4py-insta 100%[===================>] 159.55M  74.9MB/s    in 2.1s    \n",
+            "\n",
+            "2022-11-23 23:21:53 (74.9 MB/s) - ‘/tmp/petsc4py-install.tar.gz’ saved [167304062/167304062]\n",
+            "\n",
+            "+++ [[ /tmp/petsc4py-install.tar.gz != skip ]]\n",
+            "+++ tar -xzf /tmp/petsc4py-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "+++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "+++ touch /usr/local/share/fem-on-colab/petsc4py.installed\n",
+            "++ SLEPC4PY_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/slepc4py-20221104-115308-daccde0-real/slepc4py-install.tar.gz\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/slepc4py-20221104-115308-daccde0-real/slepc4py-install.tar.gz == http* ]]\n",
+            "++ SLEPC4PY_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/slepc4py-20221104-115308-daccde0-real/slepc4py-install.tar.gz\n",
+            "++ SLEPC4PY_ARCHIVE_PATH=/tmp/slepc4py-install.tar.gz\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/slepc4py-20221104-115308-daccde0-real/slepc4py-install.tar.gz -O /tmp/slepc4py-install.tar.gz\n",
+            "--2022-11-23 23:21:59--  https://github.com/fem-on-colab/fem-on-colab/releases/download/slepc4py-20221104-115308-daccde0-real/slepc4py-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/247cb8aa-8e44-4368-ae87-3a293da9da27?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232159Z&X-Amz-Expires=300&X-Amz-Signature=bc71b6eeae8d304db9b7d9f431165770398e1e68638ad333c3836e880d80943b&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dslepc4py-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:21:59--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/247cb8aa-8e44-4368-ae87-3a293da9da27?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232159Z&X-Amz-Expires=300&X-Amz-Signature=bc71b6eeae8d304db9b7d9f431165770398e1e68638ad333c3836e880d80943b&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dslepc4py-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 17356967 (17M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/slepc4py-install.tar.gz’\n",
+            "\n",
+            "/tmp/slepc4py-insta 100%[===================>]  16.55M  --.-KB/s    in 0.1s    \n",
+            "\n",
+            "2022-11-23 23:21:59 (119 MB/s) - ‘/tmp/slepc4py-install.tar.gz’ saved [17356967/17356967]\n",
+            "\n",
+            "++ [[ /tmp/slepc4py-install.tar.gz != skip ]]\n",
+            "++ tar -xzf /tmp/slepc4py-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++ touch /usr/local/share/fem-on-colab/slepc4py.installed\n",
+            "+ ITK_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/2f7dd83/releases/itk-install.sh\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/2f7dd83/releases/itk-install.sh == http* ]]\n",
+            "+ ITK_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/2f7dd83/releases/itk-install.sh\n",
+            "+ ITK_INSTALL_SCRIPT_PATH=/tmp/itk-install.sh\n",
+            "+ [[ ! -f /tmp/itk-install.sh ]]\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/2f7dd83/releases/itk-install.sh -O /tmp/itk-install.sh\n",
+            "--2022-11-23 23:22:00--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/2f7dd83/releases/itk-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/2f7dd8318c0c7145f9d3634179e69148a585a683/releases/itk-install.sh [following]\n",
+            "--2022-11-23 23:22:00--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/2f7dd8318c0c7145f9d3634179e69148a585a683/releases/itk-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.109.133, 185.199.110.133, 185.199.111.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.109.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1558 (1.5K) [text/plain]\n",
+            "Saving to: ‘/tmp/itk-install.sh’\n",
+            "\n",
+            "/tmp/itk-install.sh 100%[===================>]   1.52K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:22:00 (21.1 MB/s) - ‘/tmp/itk-install.sh’ saved [1558/1558]\n",
+            "\n",
+            "+ source /tmp/itk-install.sh\n",
+            "++ set -e\n",
+            "++ set -x\n",
+            "++ INSTALL_PREFIX=/usr/local\n",
+            "+++ echo /usr/local\n",
+            "+++ awk -F/ '{print NF-1}'\n",
+            "++ INSTALL_PREFIX_DEPTH=2\n",
+            "++ PROJECT_NAME=fem-on-colab\n",
+            "++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++ ITK_INSTALLED=/usr/local/share/fem-on-colab/itk.installed\n",
+            "++ [[ ! -f /usr/local/share/fem-on-colab/itk.installed ]]\n",
+            "++ VTK_INSTALL_SCRIPT_PATH=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/8408708/releases/vtk-install.sh\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab.github.io/raw/8408708/releases/vtk-install.sh == http* ]]\n",
+            "++ VTK_INSTALL_SCRIPT_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab.github.io/raw/8408708/releases/vtk-install.sh\n",
+            "++ VTK_INSTALL_SCRIPT_PATH=/tmp/vtk-install.sh\n",
+            "++ [[ ! -f /tmp/vtk-install.sh ]]\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab.github.io/raw/8408708/releases/vtk-install.sh -O /tmp/vtk-install.sh\n",
+            "--2022-11-23 23:22:00--  https://github.com/fem-on-colab/fem-on-colab.github.io/raw/8408708/releases/vtk-install.sh\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/84087084ee5d486afc80a22f880e16ce56d2f907/releases/vtk-install.sh [following]\n",
+            "--2022-11-23 23:22:00--  https://raw.githubusercontent.com/fem-on-colab/fem-on-colab.github.io/84087084ee5d486afc80a22f880e16ce56d2f907/releases/vtk-install.sh\n",
+            "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 1633 (1.6K) [text/plain]\n",
+            "Saving to: ‘/tmp/vtk-install.sh’\n",
+            "\n",
+            "/tmp/vtk-install.sh 100%[===================>]   1.59K  --.-KB/s    in 0s      \n",
+            "\n",
+            "2022-11-23 23:22:01 (17.9 MB/s) - ‘/tmp/vtk-install.sh’ saved [1633/1633]\n",
+            "\n",
+            "++ source /tmp/vtk-install.sh\n",
+            "+++ set -e\n",
+            "+++ set -x\n",
+            "+++ INSTALL_PREFIX=/usr/local\n",
+            "++++ echo /usr/local\n",
+            "++++ awk -F/ '{print NF-1}'\n",
+            "+++ INSTALL_PREFIX_DEPTH=2\n",
+            "+++ PROJECT_NAME=fem-on-colab\n",
+            "+++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "+++ VTK_INSTALLED=/usr/local/share/fem-on-colab/vtk.installed\n",
+            "+++ [[ ! -f /usr/local/share/fem-on-colab/vtk.installed ]]\n",
+            "+++ GCC_INSTALL_SCRIPT_PATH=/tmp/gcc-install.sh\n",
+            "+++ [[ /tmp/gcc-install.sh == http* ]]\n",
+            "+++ source /tmp/gcc-install.sh\n",
+            "++++ set -e\n",
+            "++++ set -x\n",
+            "++++ INSTALL_PREFIX=/usr/local\n",
+            "+++++ echo /usr/local\n",
+            "+++++ awk -F/ '{print NF-1}'\n",
+            "++++ INSTALL_PREFIX_DEPTH=2\n",
+            "++++ PROJECT_NAME=fem-on-colab\n",
+            "++++ SHARE_PREFIX=/usr/local/share/fem-on-colab\n",
+            "++++ GCC_INSTALLED=/usr/local/share/fem-on-colab/gcc.installed\n",
+            "++++ [[ ! -f /usr/local/share/fem-on-colab/gcc.installed ]]\n",
+            "+++ VTK_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/vtk-20221104-101218-daccde0/vtk-install.tar.gz\n",
+            "+++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/vtk-20221104-101218-daccde0/vtk-install.tar.gz == http* ]]\n",
+            "+++ VTK_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/vtk-20221104-101218-daccde0/vtk-install.tar.gz\n",
+            "+++ VTK_ARCHIVE_PATH=/tmp/vtk-install.tar.gz\n",
+            "+++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/vtk-20221104-101218-daccde0/vtk-install.tar.gz -O /tmp/vtk-install.tar.gz\n",
+            "--2022-11-23 23:22:01--  https://github.com/fem-on-colab/fem-on-colab/releases/download/vtk-20221104-101218-daccde0/vtk-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/02e984ce-31e8-4fd1-a3d8-51f9bd31bdb1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232201Z&X-Amz-Expires=300&X-Amz-Signature=866b22b8f450f3cdae1f43683d8f370eba7cfcc4e19ddf14a33bb95a0effb4ce&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dvtk-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:22:01--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/02e984ce-31e8-4fd1-a3d8-51f9bd31bdb1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232201Z&X-Amz-Expires=300&X-Amz-Signature=866b22b8f450f3cdae1f43683d8f370eba7cfcc4e19ddf14a33bb95a0effb4ce&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dvtk-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 88963883 (85M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/vtk-install.tar.gz’\n",
+            "\n",
+            "/tmp/vtk-install.ta 100%[===================>]  84.84M  94.0MB/s    in 0.9s    \n",
+            "\n",
+            "2022-11-23 23:22:02 (94.0 MB/s) - ‘/tmp/vtk-install.tar.gz’ saved [88963883/88963883]\n",
+            "\n",
+            "+++ [[ /tmp/vtk-install.tar.gz != skip ]]\n",
+            "+++ tar -xzf /tmp/vtk-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "+++ apt install -y -qq libgl1-mesa-dev libxrender1 xvfb\n",
+            "libxrender1 is already the newest version (1:0.9.10-1).\n",
+            "libxrender1 set to manually installed.\n",
+            "libgl1-mesa-dev is already the newest version (20.0.8-0ubuntu1~18.04.1).\n",
+            "libgl1-mesa-dev set to manually installed.\n",
+            "The following package was automatically installed and is no longer required:\n",
+            "  libnvidia-common-460\n",
+            "Use 'apt autoremove' to remove it.\n",
+            "The following NEW packages will be installed:\n",
+            "  xvfb\n",
+            "0 upgraded, 1 newly installed, 0 to remove and 5 not upgraded.\n",
+            "Need to get 785 kB of archives.\n",
+            "After this operation, 2,271 kB of additional disk space will be used.\n",
+            "Selecting previously unselected package xvfb.\n",
+            "(Reading database ... 123991 files and directories currently installed.)\n",
+            "Preparing to unpack .../xvfb_2%3a1.19.6-1ubuntu4.11_amd64.deb ...\n",
+            "Unpacking xvfb (2:1.19.6-1ubuntu4.11) ...\n",
+            "Setting up xvfb (2:1.19.6-1ubuntu4.11) ...\n",
+            "Processing triggers for man-db (2.8.3-2ubuntu0.1) ...\n",
+            "+++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "+++ touch /usr/local/share/fem-on-colab/vtk.installed\n",
+            "++ ITK_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/itk-20221104-102218-daccde0/itk-install.tar.gz\n",
+            "++ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/itk-20221104-102218-daccde0/itk-install.tar.gz == http* ]]\n",
+            "++ ITK_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/itk-20221104-102218-daccde0/itk-install.tar.gz\n",
+            "++ ITK_ARCHIVE_PATH=/tmp/itk-install.tar.gz\n",
+            "++ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/itk-20221104-102218-daccde0/itk-install.tar.gz -O /tmp/itk-install.tar.gz\n",
+            "--2022-11-23 23:22:17--  https://github.com/fem-on-colab/fem-on-colab/releases/download/itk-20221104-102218-daccde0/itk-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.113.4\n",
+            "Connecting to github.com (github.com)|140.82.113.4|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/adf1d739-1e78-4cd8-b19e-d6134c93117e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232217Z&X-Amz-Expires=300&X-Amz-Signature=b92cc28e69f9e69f2850138fbff2ae27352861c8ccbbf57f3079854d2067531c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Ditk-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:22:17--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/adf1d739-1e78-4cd8-b19e-d6134c93117e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232217Z&X-Amz-Expires=300&X-Amz-Signature=b92cc28e69f9e69f2850138fbff2ae27352861c8ccbbf57f3079854d2067531c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Ditk-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 302572271 (289M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/itk-install.tar.gz’\n",
+            "\n",
+            "/tmp/itk-install.ta 100%[===================>] 288.55M  88.8MB/s    in 3.3s    \n",
+            "\n",
+            "2022-11-23 23:22:21 (88.8 MB/s) - ‘/tmp/itk-install.tar.gz’ saved [302572271/302572271]\n",
+            "\n",
+            "++ [[ /tmp/itk-install.tar.gz != skip ]]\n",
+            "++ tar -xzf /tmp/itk-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "++ mkdir -p /usr/local/share/fem-on-colab\n",
+            "++ touch /usr/local/share/fem-on-colab/itk.installed\n",
+            "+ FENICSX_ARCHIVE_PATH=https://github.com/fem-on-colab/fem-on-colab/releases/download/fenicsx-20221119-010134-ae2ea5c-real/fenicsx-install.tar.gz\n",
+            "+ [[ https://github.com/fem-on-colab/fem-on-colab/releases/download/fenicsx-20221119-010134-ae2ea5c-real/fenicsx-install.tar.gz == http* ]]\n",
+            "+ FENICSX_ARCHIVE_DOWNLOAD=https://github.com/fem-on-colab/fem-on-colab/releases/download/fenicsx-20221119-010134-ae2ea5c-real/fenicsx-install.tar.gz\n",
+            "+ FENICSX_ARCHIVE_PATH=/tmp/fenicsx-install.tar.gz\n",
+            "+ wget https://github.com/fem-on-colab/fem-on-colab/releases/download/fenicsx-20221119-010134-ae2ea5c-real/fenicsx-install.tar.gz -O /tmp/fenicsx-install.tar.gz\n",
+            "--2022-11-23 23:22:35--  https://github.com/fem-on-colab/fem-on-colab/releases/download/fenicsx-20221119-010134-ae2ea5c-real/fenicsx-install.tar.gz\n",
+            "Resolving github.com (github.com)... 140.82.114.3\n",
+            "Connecting to github.com (github.com)|140.82.114.3|:443... connected.\n",
+            "HTTP request sent, awaiting response... 302 Found\n",
+            "Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/143bca58-bfdb-4f82-81cf-66449c5b72e0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232235Z&X-Amz-Expires=300&X-Amz-Signature=071b057b419f4c537e43a76ea5d77b9a7a85e1de9c65e139630f5592bdd57907&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dfenicsx-install.tar.gz&response-content-type=application%2Foctet-stream [following]\n",
+            "--2022-11-23 23:22:35--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/370599515/143bca58-bfdb-4f82-81cf-66449c5b72e0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221123T232235Z&X-Amz-Expires=300&X-Amz-Signature=071b057b419f4c537e43a76ea5d77b9a7a85e1de9c65e139630f5592bdd57907&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=370599515&response-content-disposition=attachment%3B%20filename%3Dfenicsx-install.tar.gz&response-content-type=application%2Foctet-stream\n",
+            "Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...\n",
+            "Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 24218924 (23M) [application/octet-stream]\n",
+            "Saving to: ‘/tmp/fenicsx-install.tar.gz’\n",
+            "\n",
+            "/tmp/fenicsx-instal 100%[===================>]  23.10M  65.0MB/s    in 0.4s    \n",
+            "\n",
+            "2022-11-23 23:22:36 (65.0 MB/s) - ‘/tmp/fenicsx-install.tar.gz’ saved [24218924/24218924]\n",
+            "\n",
+            "+ [[ /tmp/fenicsx-install.tar.gz != skip ]]\n",
+            "+ tar -xzf /tmp/fenicsx-install.tar.gz --strip-components=2 --directory=/usr/local\n",
+            "+ mkdir -p /usr/local/share/fem-on-colab\n",
+            "+ touch /usr/local/share/fem-on-colab/fenicsx.installed\n",
+            "+ set +x\n",
+            "################################################################################\n",
+            "#     This installation is offered by FEM on Colab, an open-source project     #\n",
+            "#       developed and maintained at Università Cattolica del Sacro Cuore       #\n",
+            "#    by Dr. Francesco Ballarin. Please see https://fem-on-colab.github.io/     #\n",
+            "#       for more details, including a list of further available packages       #\n",
+            "#                    and how to contribute to the project.                     #\n",
+            "#                                                                              #\n",
+            "#   We are conducting an informal survey on FEM on Colab usage by our users.   #\n",
+            "#   The survey is anonymous, and its compilation will typically only require   #\n",
+            "#   a couple of minutes of your time. If you wish, give us your feedback at    #\n",
+            "#                     https://forms.gle/36sZZWNvPpUv8XWr7                      #\n",
+            "################################################################################\n"
+          ]
+        }
+      ],
+      "source": [
+        "try:\n",
+        "    # Import FEniCSx libraries for finite element analysis.\n",
+        "    import dolfinx\n",
+        "except ImportError:\n",
+        "    # If they are not found, install them.  Then import them.\n",
+        "    !wget \"https://fem-on-colab.github.io/releases/fenicsx-install-real.sh\" -O \"/tmp/fenicsx-install.sh\" && bash \"/tmp/fenicsx-install.sh\"\n",
+        "    import dolfinx"
+      ],
+      "id": "mediterranean-century"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 3,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "WbKnhYd_hJHf",
+        "outputId": "11f7d495-7f5f-47eb-ec32-6eafadc2825d"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/\n",
+            "Collecting multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e\n",
+            "  Cloning https://github.com/multiphenics/multiphenicsx.git (to revision 8b97b4e) to /tmp/pip-install-3zkph4fk/multiphenicsx_83827fcce07345e0929a5a0f4b334b46\n",
+            "  Running command git clone -q https://github.com/multiphenics/multiphenicsx.git /tmp/pip-install-3zkph4fk/multiphenicsx_83827fcce07345e0929a5a0f4b334b46\n",
+            "\u001b[33m  WARNING: Did not find branch or tag '8b97b4e', assuming revision or ref.\u001b[0m\n",
+            "  Running command git checkout -q 8b97b4e\n",
+            "  Installing build dependencies ... \u001b[?25l\u001b[?25hdone\n",
+            "  Getting requirements to build wheel ... \u001b[?25l\u001b[?25hdone\n",
+            "    Preparing wheel metadata ... \u001b[?25l\u001b[?25hdone\n",
+            "Requirement already satisfied: petsc4py in /usr/local/lib/python3.7/dist-packages (from multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (3.19.0.dev0)\n",
+            "Requirement already satisfied: fenics-dolfinx in /usr/local/lib/python3.7/dist-packages (from multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (0.6.0.dev0)\n",
+            "Requirement already satisfied: mpi4py in /usr/local/lib/python3.7/dist-packages (from multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (4.0.0.dev0)\n",
+            "Requirement already satisfied: numpy>=1.21.0 in /usr/local/lib/python3.7/dist-packages (from multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (1.21.6)\n",
+            "Requirement already satisfied: cppimport in /usr/local/lib/python3.7/dist-packages (from multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (22.8.2.post6+g0849d17.d20221119)\n",
+            "Requirement already satisfied: filelock in /usr/local/lib/python3.7/dist-packages (from cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (3.8.0)\n",
+            "Requirement already satisfied: pybind11 in /usr/local/lib/python3.7/dist-packages (from cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (2.11.0.dev1)\n",
+            "Requirement already satisfied: mako in /usr/local/lib/python3.7/dist-packages (from cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (1.2.4)\n",
+            "Requirement already satisfied: cffi in /usr/local/lib/python3.7/dist-packages (from fenics-dolfinx->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (1.15.1)\n",
+            "Requirement already satisfied: fenics-ufl<2022.4.0,>=2022.3.0.dev0 in /usr/local/lib/python3.7/dist-packages (from fenics-dolfinx->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (2022.3.0.dev0)\n",
+            "Requirement already satisfied: fenics-ffcx<0.7.0,>=0.6.0.dev0 in /usr/local/lib/python3.7/dist-packages (from fenics-dolfinx->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (0.6.0.dev0)\n",
+            "Requirement already satisfied: fenics-basix<0.7.0,>=0.6.0.dev0 in /usr/local/lib/python3.7/dist-packages (from fenics-ffcx<0.7.0,>=0.6.0.dev0->fenics-dolfinx->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (0.6.0.dev0)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.7/dist-packages (from fenics-ffcx<0.7.0,>=0.6.0.dev0->fenics-dolfinx->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (57.4.0)\n",
+            "Requirement already satisfied: pycparser in /usr/local/lib/python3.7/dist-packages (from cffi->fenics-dolfinx->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (2.21)\n",
+            "Requirement already satisfied: importlib-metadata in /usr/local/lib/python3.7/dist-packages (from mako->cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (4.13.0)\n",
+            "Requirement already satisfied: MarkupSafe>=0.9.2 in /usr/local/lib/python3.7/dist-packages (from mako->cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (2.0.1)\n",
+            "Requirement already satisfied: zipp>=0.5 in /usr/local/lib/python3.7/dist-packages (from importlib-metadata->mako->cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (3.10.0)\n",
+            "Requirement already satisfied: typing-extensions>=3.6.4 in /usr/local/lib/python3.7/dist-packages (from importlib-metadata->mako->cppimport->multiphenicsx@ git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e) (4.1.1)\n",
+            "Building wheels for collected packages: multiphenicsx\n",
+            "  Building wheel for multiphenicsx (PEP 517) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for multiphenicsx: filename=multiphenicsx-0.2.dev1-py3-none-any.whl size=42587 sha256=81894eb2c4e2850f0f3ddf5371bb8a959b2c8d5ab87633d81eebd07861b04778\n",
+            "  Stored in directory: /tmp/pip-ephem-wheel-cache-90r16axq/wheels/a4/44/a9/e578d5b67de6acd8e975bd56c96ee36944a693ee3d7bc91026\n",
+            "Successfully built multiphenicsx\n",
+            "Installing collected packages: multiphenicsx\n",
+            "Successfully installed multiphenicsx-0.2.dev1\n"
+          ]
+        }
+      ],
+      "source": [
+        "try:\n",
+        "    # Import multiphenicsx, mainly for plotting.\n",
+        "    import multiphenicsx\n",
+        "except ImportError:\n",
+        "    # If they are not found, install them.\n",
+        "    !pip3 install \"multiphenicsx@git+https://github.com/multiphenics/multiphenicsx.git@8b97b4e\"\n",
+        "    import multiphenicsx"
+      ],
+      "id": "WbKnhYd_hJHf"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "oj1SSuMXJytW"
+      },
+      "source": [
+        "Everything we need should be installed now!\n",
+        "\n",
+        "If you \"Restart runtime\" from the \"Runtime\" menu, all of your data will be reset, but the packages will remain installed.\n",
+        "\n",
+        "Let's load the packages we need, and get started!"
+      ],
+      "id": "oj1SSuMXJytW"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 4,
+      "metadata": {
+        "id": "QbcHvDwImO1j"
+      },
+      "outputs": [],
+      "source": [
+        "# Everything should be installed now.\n",
+        "# Import the rest of what we need.\n",
+        "\n",
+        "import dolfinx.fem\n",
+        "import dolfinx.io\n",
+        "import gmsh\n",
+        "import mpi4py.MPI\n",
+        "import numpy as np\n",
+        "import petsc4py.PETSc\n",
+        "import ufl\n",
+        "import multiphenicsx.fem\n",
+        "import multiphenicsx.io"
+      ],
+      "id": "QbcHvDwImO1j"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "box5f4pW9LQt"
+      },
+      "source": [
+        "# Inputs"
+      ],
+      "id": "box5f4pW9LQt"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 5,
+      "metadata": {
+        "id": "4KundBkup_nJ"
+      },
+      "outputs": [],
+      "source": [
+        "## Adjust this cell to change the geometry:\n",
+        "# Specify sizes of the objects\n",
+        "# and adjust material properties.\n",
+        "\n",
+        "# Geometric dimension of the mesh\n",
+        "dim = 2\n",
+        "\n",
+        "\n",
+        "## Background\n",
+        "# Radius of the entire domain\n",
+        "r_background = 5\n",
+        "\n",
+        "# Magnetic permeability (relative) of background medium\n",
+        "mu_background = 1\n",
+        "\n",
+        "\n",
+        "## Wires\n",
+        "# Radius of individual wires\n",
+        "r_wire = 0.1\n",
+        "\n",
+        "# Location of centers of inner and outer rings of wires.\n",
+        "centers_inner = 0.8 \n",
+        "centers_outer = 1.4 \n",
+        "\n",
+        "# Number of wires.\n",
+        "N = 2\n",
+        "\n",
+        "# Magnetic permeability (relative) of wires.\n",
+        "mu_wire = 1\n",
+        "\n",
+        "# Current density in each wire.\n",
+        "J0 = 4.0\n",
+        "\n",
+        "\n",
+        "## Ring\n",
+        "# Inner and outer radii of ring\n",
+        "ring_inner = 1     \n",
+        "ring_outer = 1.2\n",
+        "\n",
+        "# Magnetic permeability (relative) of ring.\n",
+        "mu_ring = 2"
+      ],
+      "id": "4KundBkup_nJ"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "D_67HUAWVueC"
+      },
+      "source": [
+        "# Concstruct the Model\n",
+        "\n",
+        "The physical system is a type of coaxial cable: a ring of $N$ wires carry a current into the page and another ring of $N$ wires carry a return current out of the page.  In between the rings of wires is a cylinder made of iron.\n",
+        "\n",
+        "The geometric model is a collection of circles.  The code below draws them all, and then combines them into a single mesh."
+      ],
+      "id": "D_67HUAWVueC"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 6,
+      "metadata": {
+        "id": "WMF_BbU8dCyM"
+      },
+      "outputs": [],
+      "source": [
+        "# Create a model.\n",
+        "gmsh.initialize()\n",
+        "gmsh.model.add(\"mesh\")\n",
+        "\n",
+        "# Define the system: a large disk.\n",
+        "background = gmsh.model.occ.addDisk(0, 0, 0, r_background, r_background)\n",
+        "gmsh.model.occ.synchronize()\n",
+        "\n",
+        "# Define geometry for the ring.\n",
+        "outer_ring = gmsh.model.occ.addCircle(0, 0, 0, ring_outer)\n",
+        "inner_ring = gmsh.model.occ.addCircle(0, 0, 0, ring_inner)\n",
+        "gmsh.model.occ.addCurveLoop([outer_ring], 5)\n",
+        "gmsh.model.occ.addCurveLoop([inner_ring], 6)\n",
+        "ring = gmsh.model.occ.addPlaneSurface([5, 6])\n",
+        "gmsh.model.occ.synchronize()\n",
+        "\n",
+        "# Create two list of circular disks to represent the wires.\n",
+        "# Define the wires inside the ring.\n",
+        "angles_in = [n * 2*np.pi/N for n in range(N)]\n",
+        "wires_in = [(2,\n",
+        "            gmsh.model.occ.addDisk(centers_inner * np.cos(v),\n",
+        "            centers_inner * np.sin(v), 0, r_wire, r_wire))\n",
+        "            for v in angles_in]\n",
+        "\n",
+        "# Define the wires outside the ring.\n",
+        "angles_out = [(n + 0.5) * 2*np.pi/N for n in range(N)]\n",
+        "wires_out = [(2,\n",
+        "            gmsh.model.occ.addDisk(centers_outer * np.cos(v),\n",
+        "            centers_outer * np.sin(v), 0, r_wire, r_wire))\n",
+        "            for v in angles_out]\n",
+        "\n",
+        "# Update the model.\n",
+        "gmsh.model.occ.synchronize()\n",
+        "\n",
+        "# Resolve the boundaries of the wires and ring in the background domain.\n",
+        "all_surfaces = [(2, ring)]\n",
+        "all_surfaces.extend(wires_in)\n",
+        "all_surfaces.extend(wires_out)\n",
+        "whole_domain = gmsh.model.occ.fragment([(2, background)], all_surfaces)\n",
+        "\n",
+        "# Update the model.\n",
+        "gmsh.model.occ.synchronize()\n",
+        "\n",
+        "# Create physical markers for each object.\n",
+        "# Use the following markers:\n",
+        "# - Vacuum: 0\n",
+        "# - Ring: 1\n",
+        "# - Inner wires: $[2,3,\\dots,N+1]$\n",
+        "# - Outer wires: $[N+2,\\dots, 2\\cdot N+1]$\n",
+        "inner_tag = 2\n",
+        "outer_tag = 2 + N\n",
+        "background_surfaces = []\n",
+        "other_surfaces = []\n",
+        "\n",
+        "# Gmsh can compute the mass of objects and the location of their\n",
+        "# centers of mass.  This loop uses these properties to determine\n",
+        "# which object to associate grid points with.\n",
+        "# \n",
+        "# We will use these tags to define material properties later.\n",
+        "for domain in whole_domain[0]:\n",
+        "    center = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])\n",
+        "    mass = gmsh.model.occ.getMass(domain[0], domain[1])\n",
+        "\n",
+        "    # Identify the ring by its mass.\n",
+        "    # Check for ring first, because center of mass is same as background.\n",
+        "    if np.isclose(mass, np.pi*(ring_outer**2 - ring_inner**2)):\n",
+        "        gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=1)\n",
+        "        other_surfaces.append(domain)\n",
+        "    \n",
+        "    # Identify the background circle by its center of mass\n",
+        "    elif np.allclose(center, [0, 0, 0]):\n",
+        "        background_surfaces.append(domain[1])\n",
+        "\n",
+        "    # Identify the inner wires by their centers of mass.\n",
+        "    elif np.isclose(np.linalg.norm(center), centers_inner):\n",
+        "        gmsh.model.addPhysicalGroup(domain[0], [domain[1]], inner_tag)\n",
+        "        inner_tag +=1\n",
+        "        other_surfaces.append(domain)\n",
+        "\n",
+        "    # Identify the outer wires by their center of mass.\n",
+        "    elif np.isclose(np.linalg.norm(center), centers_outer):\n",
+        "        gmsh.model.addPhysicalGroup(domain[0], [domain[1]], outer_tag)\n",
+        "        outer_tag +=1\n",
+        "        other_surfaces.append(domain)\n",
+        "\n",
+        "# Add marker for the vacuum.\n",
+        "gmsh.model.addPhysicalGroup(2, background_surfaces, tag=0)\n",
+        "\n",
+        "# Create mesh resolution that is fine around the wires and\n",
+        "# make the grid coarse further away from the ring.\n",
+        "gmsh.model.mesh.field.add(\"Distance\", 1)\n",
+        "edges = gmsh.model.getBoundary(other_surfaces, oriented=False)\n",
+        "gmsh.model.mesh.field.setNumbers(1, \"EdgesList\", [e[1] for e in edges])\n",
+        "gmsh.model.mesh.field.add(\"Threshold\", 2)\n",
+        "gmsh.model.mesh.field.setNumber(2, \"IField\", 1)\n",
+        "gmsh.model.mesh.field.setNumber(2, \"LcMin\", r_wire / 2)\n",
+        "gmsh.model.mesh.field.setNumber(2, \"LcMax\", 5 * r_wire)\n",
+        "gmsh.model.mesh.field.setNumber(2, \"DistMin\", 2 * r_wire)\n",
+        "gmsh.model.mesh.field.setNumber(2, \"DistMax\", 4 * r_wire)\n",
+        "gmsh.model.mesh.field.setAsBackgroundMesh(2)\n",
+        "gmsh.option.setNumber(\"Mesh.Algorithm\", 7)\n",
+        "\n",
+        "# Create a mesh for this system.\n",
+        "gmsh.model.mesh.generate(dim)\n",
+        "\n",
+        "# Bring the mesh into FEniCSx.\n",
+        "mesh, subdomains, boundaries = dolfinx.io.gmshio.model_to_mesh(\n",
+        "    gmsh.model, comm=mpi4py.MPI.COMM_WORLD, rank=0, gdim=2)\n",
+        "\n",
+        "gmsh.finalize()"
+      ],
+      "id": "WMF_BbU8dCyM"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 717,
+          "referenced_widgets": [
+            "230b845f81ba4bd9833fd39996ca727c",
+            "1c14cee214794f5d94cec8a8ea60a522"
+          ]
+        },
+        "id": "F2gto5GKrhJM",
+        "outputId": "93cb8c18-a284-434a-d992-85cef3f01402"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "230b845f81ba4bd9833fd39996ca727c",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "230b845f81ba4bd9833fd39996ca727c",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        }
+      ],
+      "source": [
+        "# Plot the entire mesh.\n",
+        "multiphenicsx.io.plot_mesh(mesh)"
+      ],
+      "id": "F2gto5GKrhJM"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 717,
+          "referenced_widgets": [
+            "c4830188a63541db8ffe90d717f45969",
+            "2cb7ccf16ef8423b85a61bf3e4b5e304"
+          ]
+        },
+        "id": "Xx0VzMfBrhJM",
+        "outputId": "9f2d5987-9141-41f2-cad7-9c5426ae2465"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "c4830188a63541db8ffe90d717f45969",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "c4830188a63541db8ffe90d717f45969",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        }
+      ],
+      "source": [
+        "# Plot the subdomains that FEniCSx has identified.\n",
+        "# There should only be one for this model.\n",
+        "multiphenicsx.io.plot_mesh_tags(subdomains)"
+      ],
+      "id": "Xx0VzMfBrhJM"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "tJKeO0eYYmgo"
+      },
+      "source": [
+        "# Finite Element Method\n",
+        "\n",
+        "Now it is time to tell FEniCSx the problem we want to solve on this mesh.\n",
+        "\n",
+        "You can vary the using the cells above geometry above.  The cell below allows you to specify the boundary conditions along the 4 edges.\n",
+        "\n",
+        "In the language of finite elements, an ***essential boundary condition*** specifies the value of the function on a boundary.  A ***natural boundary condtions*** specifies the derivative."
+      ],
+      "id": "tJKeO0eYYmgo"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "NWzMA3MQdXv0"
+      },
+      "outputs": [],
+      "source": [
+        "# This loop will assign material properties to each cell in our model.\n",
+        "# In this case, it is the relative magnetic permeability and current density.\n",
+        "\n",
+        "# Define a simple function space for properties.\n",
+        "Q = dolfinx.fem.FunctionSpace(mesh, (\"DG\", 0))\n",
+        "\n",
+        "# Get the list of materials.\n",
+        "material_tags = np.unique(subdomains.values)\n",
+        "\n",
+        "# Define functions for current density and magnetic permeability.\n",
+        "mu = dolfinx.fem.Function(Q)\n",
+        "J = dolfinx.fem.Function(Q)\n",
+        "\n",
+        "# Only some regions carry current. Initialize all current densities to zero.\n",
+        "J.x.array[:] = 0.0\n",
+        "\n",
+        "# Now, cycle over all objects and assign material properties. \n",
+        "for tag in material_tags:\n",
+        "    cells = subdomains.find(tag)\n",
+        "    \n",
+        "    # Set values for magnetic permeability.\n",
+        "    if tag == 0:\n",
+        "        # Vacuum\n",
+        "        mu_ = mu_background\n",
+        "    elif tag == 1:\n",
+        "        # Ring\n",
+        "        mu_ = mu_ring\n",
+        "    else:\n",
+        "        # Wire\n",
+        "        mu_ = mu_wire\n",
+        "\n",
+        "    mu.x.array[cells] = np.full_like(cells, mu_, dtype=petsc4py.PETSc.ScalarType)\n",
+        "    \n",
+        "    # Set nonzero current densities.\n",
+        "    if tag in range(2, 2+N):\n",
+        "        J.x.array[cells] = np.full_like(cells, J0, dtype=petsc4py.PETSc.ScalarType)\n",
+        "    elif tag in range(2+N, 2*N + 2):\n",
+        "        J.x.array[cells] = np.full_like(cells, -J0, dtype=petsc4py.PETSc.ScalarType)"
+      ],
+      "id": "NWzMA3MQdXv0"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "BCkf3RavecLA",
+        "outputId": "aed5bf06-ff89-4a24-e0fa-b5878b86352f"
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": [
+              "Coefficient(FunctionSpace(Mesh(VectorElement(Basix element (P, triangle, 1, equispaced, unset, False), 2), 6), Basix element (P, triangle, 2, gll_warped, unset, False)), 27)"
+            ]
+          },
+          "execution_count": 62,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "## Set up the finite element problem.\n",
+        "\n",
+        "# Define trial and test functions.\n",
+        "V = dolfinx.fem.FunctionSpace(mesh, (\"Lagrange\", 2))\n",
+        "\n",
+        "# Define the trial and test functions.\n",
+        "u = ufl.TrialFunction(V)\n",
+        "v = ufl.TestFunction(V)\n",
+        "\n",
+        "# Create a function to store the solution.\n",
+        "# This is the vector potential.  A_x = A_y = 0.\n",
+        "A_z = dolfinx.fem.Function(V)\n",
+        "\n",
+        "# Identify the domain and boundary.\n",
+        "D = mesh.topology.dim\n",
+        "Omega = dolfinx.mesh.locate_entities_boundary(mesh, D-1, lambda x: np.full(x.shape[1], True))\n",
+        "dOmega = dolfinx.fem.locate_dofs_topological(V, D-1, Omega)\n",
+        "\n",
+        "# Force the potential to vanish on the boundary.\n",
+        "bc = dolfinx.fem.dirichletbc(petsc4py.PETSc.ScalarType(0), dOmega, V)\n",
+        "\n",
+        "# Define the Poisson equation we are trying to solve.\n",
+        "a = (1 / mu) * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx\n",
+        "L = 4 * ufl.pi * J * v * ufl.dx\n",
+        "\n",
+        "# Define the problem.\n",
+        "problem = dolfinx.fem.petsc.LinearProblem(a, L, u=A_z, bcs=[bc])\n",
+        "\n",
+        "# Solve the problem.\n",
+        "problem.solve()"
+      ],
+      "id": "BCkf3RavecLA"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "6s_DnHRIeipN"
+      },
+      "outputs": [],
+      "source": [
+        "# Compute the magnetic field.\n",
+        "W = dolfinx.fem.VectorFunctionSpace(mesh, (\"CG\", 2))\n",
+        "B = dolfinx.fem.Function(W)\n",
+        "B_expr = dolfinx.fem.Expression(ufl.as_vector((A_z.dx(1), -A_z.dx(0))), W.element.interpolation_points())\n",
+        "B.interpolate(B_expr)"
+      ],
+      "id": "6s_DnHRIeipN"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "niKyHxAC9ChI"
+      },
+      "source": [
+        "# Results"
+      ],
+      "id": "niKyHxAC9ChI"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 717,
+          "referenced_widgets": [
+            "44bb8e5ef95e4b5cbc532ac43c69c1f9",
+            "93d78326d62e47549dbccffa0ef41358"
+          ]
+        },
+        "id": "I3LLHcRdeumt",
+        "outputId": "a101d86a-0db9-4ccb-c10f-27e4310f64d3"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "44bb8e5ef95e4b5cbc532ac43c69c1f9",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "44bb8e5ef95e4b5cbc532ac43c69c1f9",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        }
+      ],
+      "source": [
+        "# Plot the vector potential.\n",
+        "multiphenicsx.io.plot_scalar_field(A_z,\"Vector Potential\", warp_factor=1)"
+      ],
+      "id": "I3LLHcRdeumt"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 717,
+          "referenced_widgets": [
+            "0819c67a16264cc5ad37c300f30eb792",
+            "73ee08dba65b45bf900d12f1c269c975"
+          ]
+        },
+        "id": "3ZlxAwyBe479",
+        "outputId": "f1352765-0aa9-48f9-ce7b-228c78625be1"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "0819c67a16264cc5ad37c300f30eb792",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "0819c67a16264cc5ad37c300f30eb792",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Viewer(geometries=[{'vtkClass': 'vtkPolyData', 'points': {'vtkClass': 'vtkPoints', 'name': '_points', 'numberO…"
+            ]
+          },
+          "metadata": {
+            "application/vnd.jupyter.widget-view+json": {
+              "colab": {
+                "custom_widget_manager": {
+                  "url": "https://ssl.gstatic.com/colaboratory-static/widgets/colab-cdn-widget-manager/d2e234f7cc04bf79/manager.min.js"
+                }
+              }
+            }
+          },
+          "output_type": "display_data"
+        }
+      ],
+      "source": [
+        "# Plot the magnetic field.\n",
+        "multiphenicsx.io.plot_vector_field(B,\"Magnetic Field\", glyph_factor=0.2)"
+      ],
+      "id": "3ZlxAwyBe479"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "xG2BmJ4d-PKD"
+      },
+      "source": [
+        "# Experiments\n",
+        "\n",
+        "Change the inputs above and run the cells to carry out the following experiments."
+      ],
+      "id": "xG2BmJ4d-PKD"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "bMX7xjlKCTob"
+      },
+      "source": [
+        "## 1. Hit Play\n",
+        "\n",
+        "Run the cells above with the default inputs.  (There is a copy of the default inputs in the cell at the bottom of the notebook.)\n",
+        "\n",
+        "- Describe the vector potential.\n",
+        "- Describe the magnetic field.\n",
+        "\n"
+      ],
+      "id": "bMX7xjlKCTob"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "WgQnpb_uDJz-"
+      },
+      "source": [
+        "***The vector potential shows a clear circle of positive potential formed by the iron cylinder. The wires within the cylinder have positive current densities, which signifies that current is flowing \"out\" of the mesh, while the opposite is true for the wires outside the cylinder. This is also clearly visualized by the vector potential, where positive current densities increase potential and look like mini hills extending out of the mesh, and negative current densities decrease it, forming small divets in the mesh.\n",
+        "\n",
+        "The magnetic field shows vector lines which are helpful to illustrate the fields around each wire. Since current is flowing in opposite directions for the wires inside and outside of the cylinder, respectively, the two have an additive effect on the field eminating from the cylinder itself. That is, the field from the iron cylinder appears to extend equally into the positive and negative z-planes. I suspect this effect would increase as we increased the magnetic permeability of the cylinder. ***"
+      ],
+      "id": "WgQnpb_uDJz-"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "BwXwo1nSDUmJ"
+      },
+      "source": [
+        "## 2. Simplify\n",
+        "\n",
+        "There is a lot going on in this model.  Let's focus on the field of the wires first.\n",
+        "- Set `N=2`.  This will reduce the simulation to 2 pairs of wires.\n",
+        "- Set `mu_ring = 1`.  This will make the ring have the same permeability as the background — effectively removing it from the system.\n",
+        "\n",
+        "Use your knowledge of magnetic fields and Laplace's equation to predict the field pattern.\n",
+        "\n",
+        "- What will the vector potential look like?\n",
+        "- What will the field look like around the individual wires?\n",
+        "- Where will the field be the strongest?  The weakest?"
+      ],
+      "id": "BwXwo1nSDUmJ"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "x9Vv-31vEjNP"
+      },
+      "source": [
+        "***Decreasing the cylinder's permeability by that much should more or less eliminate it from our visualizations. That would just leave the effects of the two wires inside and outside the cylinder, which I would expect to look the same as in the previous example -- the positive charge density wires should appear to pop out of the mesh while the negative charge density wires shoud appear to sink into the mesh.***"
+      ],
+      "id": "x9Vv-31vEjNP"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "BrTjTZdfEtP3"
+      },
+      "source": [
+        "Now run the simulation again.  Inspect the model, the vector potential, and the magnetic field.\n",
+        "\n",
+        "- What features are consistent with your predictions?\n",
+        "- What features were surprising?"
+      ],
+      "id": "BrTjTZdfEtP3"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ubleXLKvFOi7"
+      },
+      "source": [
+        "***The vector potential looked about as I expected. At first, it appeared (when zoomed out) that the iron core still produced a very noticeable magnetic field. However, upon a deeper look, I think the ring of magnetic field appears where the ring is because the mesh is more granular over that area. In other words, the cylinder has been taken out of the equation here, but the vector lines eminating from the wires (when placed equidistant from each other along the inside/outside of the cylinder) will react with each other to produce a seemingly circular field. With permeability diminished, however, this does not result in a field that extends in either the positive or negative z-plane.***"
+      ],
+      "id": "ubleXLKvFOi7"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "0mh-9pNKFdqN"
+      },
+      "source": [
+        "## 3. Coaxial Cable\n",
+        "\n",
+        "Let's use this simulation to model a coaxial cable.  We can increase the number of wires to some large value to simulate to concentric conducting cylinders — one carrying a current into the plane of your monitor and one carrying an equal current out.\n",
+        "\n",
+        "- Set `N` to something between 20 and 100.\n",
+        "- Set `mu_ring = 1`.  This will make the ring have the same permeability as the background — effectively removing it from the system.\n",
+        "\n",
+        "Use your knowledge of magnetic fields and Laplace's equation to predict the field pattern.\n",
+        "\n",
+        "- What will the vector potential look like?\n",
+        "- What will the field look like around the individual wires?\n",
+        "- Where will the field be the strongest?  The weakest?"
+      ],
+      "id": "0mh-9pNKFdqN"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "XUPmmLUvFdqO"
+      },
+      "source": [
+        "***Keeping the permeability at net-zero, I don't expect to see any impact from the iron cylinder, just as the previous example demonstrated. However, with more wires and thus more current inside and outside the cylinder, I expect the opposing currents to more thoroughly cancel each other out. In comparison, if we increased N to a high number AND we increased the permability of the iron cylinder, I would expect a strong magnetic field to form around the cylinder.***"
+      ],
+      "id": "XUPmmLUvFdqO"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "knBZzn2GFdqO"
+      },
+      "source": [
+        "Now run the simulation again.  Inspect the model, the vector potential, and the magnetic field.\n",
+        "\n",
+        "- What features are consistent with your predictions?\n",
+        "- What features were surprising?"
+      ],
+      "id": "knBZzn2GFdqO"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "_q92z-oCFdqO"
+      },
+      "source": [
+        "***As expected, the net impact of having large and equal numbers of current-carrying wires led to a flattening of overall net potential and magnetic field strength.***"
+      ],
+      "id": "_q92z-oCFdqO"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7yJ4cpp1G_m-"
+      },
+      "source": [
+        "## 4. Iron Ring\n",
+        "\n",
+        "Let's explore the effect of the ring now.  The relative permeability of carbon steel is $\\mu \\approx 10$ — the default value.  However, the relative permeability of soft iron is much larger: $\\mu > 5000$.  Such large values make the plots difficult to interpret, but let's explore the effect of changing $mu$.\n",
+        "\n",
+        "- Set `N=2` for 2 pairs of wires.\n",
+        "- Set `mu_ring = 2`.\n",
+        "\n",
+        "Use your knowledge of magnetic fields and Laplace's equation to predict the field pattern.\n",
+        "\n",
+        "- You simulated a similar system in Experiment #2.  How will the ring affect the field?\n",
+        "- What will the vector potential look like?\n",
+        "- What will the field look like around the individual wires?\n",
+        "- Where will the field be the strongest?  The weakest?"
+      ],
+      "id": "7yJ4cpp1G_m-"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "UcjfgLIGG_nM"
+      },
+      "source": [
+        "***I'm expecting something similar to the first plot but much less defined in the region containing the iron cylinder. In other words, a low but non-zero value of permeability should result in a small magnetic field formed along the cylinder. This would make it appear as though the cylinder very is slightly popping out of the mesh***"
+      ],
+      "id": "UcjfgLIGG_nM"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "d44L5ZNBG_nM"
+      },
+      "source": [
+        "Now run the simulation again.  Inspect the model, the vector potential, and the magnetic field.\n",
+        "\n",
+        "- What features are consistent with your predictions?\n",
+        "- What features were surprising?"
+      ],
+      "id": "d44L5ZNBG_nM"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "TXeIpPRbG_nM"
+      },
+      "source": [
+        "***Surprisingly, the potential and the magnetic field around the cylinder appear to have been canceled out by the fields eminating from the wires themselves. I suspect this will not be the case as we increase the value of permeability.***"
+      ],
+      "id": "TXeIpPRbG_nM"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "V5BgcNNiH73M"
+      },
+      "source": [
+        "Repeat the simulation for different values of $\\mu$:\n",
+        "- $\\mu=5$\n",
+        "- $\\mu=10$\n",
+        "- $\\mu=100$\n",
+        "- $\\mu=5000$\n",
+        "\n",
+        "Inspect the model, the vector potential, and the magnetic field.\n",
+        "\n",
+        "Summarize the effect of a permeable ring between the wires."
+      ],
+      "id": "V5BgcNNiH73M"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "g7sSYFpnH73Z"
+      },
+      "source": [
+        "***Generally, as the permeability of the cylinder increases and all other variable are held constant, net potential will increase within the cylinder. This manifests on a plot as a rise along the z-axis within the circular area of the iron cylinder. If we hold permeability constant, but above the value of the background, and increase the number of current-carrying wires, this also increases the potential within the cylinder. At the same time, the equal and opposite currents in the wires are additive when it comes to the strength of the magnetic field. That is, the z-components of the induced fields cancel each other out but the x- and y-components are amplified, resulting in a strong, circular magentic field around the cylinder.\n",
+        "\n",
+        "In sum, a permeable ring can both amplify the potential within the ring and form a strong magnetic field along the ring.***"
+      ],
+      "id": "g7sSYFpnH73Z"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "2f_bapi9JFUk"
+      },
+      "source": [
+        "## 5. Your Choice\n",
+        "\n",
+        "Carry out your own experiments with the simulation.  Change the current, the number of wires, the size of the iron ring, the permeability of the wires — or explore your own ideas.\n",
+        "\n",
+        "Describe your procedure and your observations."
+      ],
+      "id": "2f_bapi9JFUk"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GLDBOYTQJjJP"
+      },
+      "source": [
+        "***The last variable I wanted to test was the current density of the wires. I tried various setups holding all other variables constant and confirmed the effect I had suspected based on our class material - as current through the wire increases, so does the strength of the magnetic field which forms radially along the axis that's perpendicular to the direction of current. So as we force more current through the wires going into and out of the mesh, the strength of the field also increases.***"
+      ],
+      "id": "GLDBOYTQJjJP"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "r0eyurrJJwxH"
+      },
+      "source": [
+        "# Challenge\n",
+        "\n",
+        "## Single Wire\n",
+        "\n",
+        "Tinker with the model code.  See if you can create a single large wire.\n",
+        "\n",
+        "Compute the vector potential and magnetic field inside and outside the wire.\n",
+        "\n",
+        "## Solenoid\n",
+        "\n",
+        "You can simulate a cross section of a solenoid by arranging the wires in straight lines instead of concentric rings.  \n",
+        "\n",
+        "Try to create a model for an electromagnet with an iron core."
+      ],
+      "id": "r0eyurrJJwxH"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "NXHPUXTgJwxH"
+      },
+      "source": [
+        "***Replace with your procedure and observations.***"
+      ],
+      "id": "NXHPUXTgJwxH"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "iDv7icuFLOnS"
+      },
+      "source": [
+        "# Reflection and Summary\n",
+        "\n",
+        "- What are the major takeaways of this assignment for you?\n",
+        "- What was the most difficult part of this assignment?\n",
+        "- What was the most interesting part of this assignment?\n",
+        "- What questions do you have?"
+      ],
+      "id": "iDv7icuFLOnS"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "8BVAlbFlLbRp"
+      },
+      "source": [
+        "***I don't have much to add beyond my other responses, but I did find this assignment quite helpful (as always, with the notebooks). The derivations and Greek symbols in the book only get me so far, but seeing the relationship between potential, magnetic fields, current, etc. visualized in an interactive 3D space really helps me to understand the hairier equations and wording in the book. \n",
+        "\n",
+        "I did initially get tripped up by how the vector arrows were drawn in the magnetic field plot. As the magntide of the vector increases its color changes AND the size of the arrow head increases. Thus, I was wrong in interpreting the earlier examples as generating a magnetic field that extended into the positive and negative z-directions; instead, the strength of the field increased radially outward in a direction parallel to the current flowing in the wires. This also checks out based on our knowledge of perpendicular electric and magnetic fields. ***"
+      ],
+      "id": "8BVAlbFlLbRp"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "SSC94ZJXDcea"
+      },
+      "source": [
+        "## Default Inputs"
+      ],
+      "id": "SSC94ZJXDcea"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "OsAGRc7_Da8a"
+      },
+      "outputs": [],
+      "source": [
+        "## Adjust this cell to change the geometry:\n",
+        "# Specify sizes of the objects\n",
+        "# and adjust material properties.\n",
+        "\n",
+        "# Geometric dimension of the mesh\n",
+        "dim = 2\n",
+        "\n",
+        "\n",
+        "## Background\n",
+        "# Radius of the entire domain\n",
+        "r_background = 5\n",
+        "\n",
+        "# Magnetic permeability (relative) of background medium\n",
+        "mu_background = 1\n",
+        "\n",
+        "\n",
+        "## Wires\n",
+        "# Radius of individual wires\n",
+        "r_wire = 0.1\n",
+        "\n",
+        "# Location of centers of inner and outer rings of wires.\n",
+        "centers_inner = 0.8 \n",
+        "centers_outer = 1.4 \n",
+        "\n",
+        "# Number of wires.\n",
+        "N = 6\n",
+        "\n",
+        "# Magnetic permeability (relative) of wires.\n",
+        "mu_wire = 1\n",
+        "\n",
+        "# Current density in each wire.\n",
+        "J0 = 1.0\n",
+        "\n",
+        "\n",
+        "## Ring\n",
+        "# Inner and outer radii of ring\n",
+        "ring_inner = 1     \n",
+        "ring_outer = 1.2\n",
+        "\n",
+        "# Magnetic permeability (relative) of ring.\n",
+        "mu_ring = 10"
+      ],
+      "id": "OsAGRc7_Da8a"
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.8.5"
+    },
+    "widgets": {
+      "application/vnd.jupyter.widget-state+json": {
+        "0819c67a16264cc5ad37c300f30eb792": {
+          "model_module": "itkwidgets",
+          "model_module_version": "^0.32.3",
+          "model_name": "ViewerModel",
+          "state": {
+            "_custom_cmap": null,
+            "_dom_classes": [],
+            "_downsampling": false,
+            "_largest_roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "_model_module": "itkwidgets",
+            "_model_module_version": "^0.32.3",
+            "_model_name": "ViewerModel",
+            "_rendering_image": false,
+            "_reset_crop_requested": false,
+            "_scale_factors": {
+              "dtype": "uint8",
+              "shape": [
+                3
+              ]
+            },
+            "_view_count": null,
+            "_view_module": "itkwidgets",
+            "_view_module_version": "^0.32.3",
+            "_view_name": "ViewerView",
+            "annotations": true,
+            "axes": false,
+            "background": [
+              0.2196078431372549,
+              0.2196078431372549,
+              0.2196078431372549
+            ],
+            "blend_mode": "composite",
+            "camera": {
+              "dtype": "float32",
+              "shape": [
+                3,
+                3
+              ]
+            },
+            "channels": [],
+            "clicked_slice_point": null,
+            "cmap": null,
+            "geometries": [
+              {
+                "metadata": {
+                  "name": "Geometry 0"
+                },
+                "pointData": {
+                  "activeScalars": 0,
+                  "activeVectors": 1,
+                  "arrays": [
+                    {
+                      "data": {
+                        "dataType": "Float32Array",
+                        "name": "GlyphScale",
+                        "numberOfComponents": 1,
+                        "size": 333374,
+                        "vtkClass": "vtkDataArray"
+                      }
+                    },
+                    {
+                      "data": {
+                        "dataType": "Float32Array",
+                        "name": "GlyphVector",
+                        "numberOfComponents": 3,
+                        "size": 1000122,
+                        "vtkClass": "vtkDataArray"
+                      }
+                    }
+                  ],
+                  "vtkClass": "vtkDataSetAttributes"
+                },
+                "points": {
+                  "dataType": "Float32Array",
+                  "name": "_points",
+                  "numberOfComponents": 3,
+                  "size": 1000122,
+                  "vtkClass": "vtkPoints"
+                },
+                "polys": {
+                  "dataType": "Uint32Array",
+                  "name": "_polys",
+                  "numberOfComponents": 1,
+                  "size": 806550,
+                  "vtkClass": "vtkCellArray"
+                },
+                "vtkClass": "vtkPolyData"
+              },
+              {
+                "lines": {
+                  "dataType": "Uint32Array",
+                  "name": "_lines",
+                  "numberOfComponents": 1,
+                  "size": 24147,
+                  "vtkClass": "vtkCellArray"
+                },
+                "metadata": {
+                  "name": "Geometry 1"
+                },
+                "points": {
+                  "dataType": "Float32Array",
+                  "name": "_points",
+                  "numberOfComponents": 3,
+                  "size": 8115,
+                  "vtkClass": "vtkPoints"
+                },
+                "vtkClass": "vtkPolyData"
+              }
+            ],
+            "geometry_colors": {
+              "dtype": "float32",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "geometry_opacities": {
+              "dtype": "float32",
+              "shape": [
+                2
+              ]
+            },
+            "gradient_opacity": 0.2,
+            "interpolation": true,
+            "label_image_blend": 0.5,
+            "label_image_names": null,
+            "label_image_weights": null,
+            "layout": "IPY_MODEL_73ee08dba65b45bf900d12f1c269c975",
+            "lut": "glasbey",
+            "mode": "v",
+            "opacity_gaussians": null,
+            "point_set_colors": {
+              "dtype": "float32",
+              "shape": [
+                0,
+                3
+              ]
+            },
+            "point_set_opacities": {
+              "dtype": "float32",
+              "shape": [
+                0
+              ]
+            },
+            "point_set_representations": [],
+            "point_set_sizes": {
+              "dtype": "uint8",
+              "shape": [
+                0
+              ]
+            },
+            "point_sets": [],
+            "rendered_image": null,
+            "rendered_label_image": null,
+            "roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "rotate": false,
+            "sample_distance": 0.25,
+            "select_roi": false,
+            "shadow": true,
+            "slicing_planes": false,
+            "ui_collapsed": true,
+            "units": "",
+            "vmax": null,
+            "vmin": null,
+            "x_slice": null,
+            "y_slice": null,
+            "z_slice": null
+          }
+        },
+        "1c14cee214794f5d94cec8a8ea60a522": {
+          "model_module": "@jupyter-widgets/base",
+          "model_module_version": "1.2.0",
+          "model_name": "LayoutModel",
+          "state": {
+            "_model_module": "@jupyter-widgets/base",
+            "_model_module_version": "1.2.0",
+            "_model_name": "LayoutModel",
+            "_view_count": null,
+            "_view_module": "@jupyter-widgets/base",
+            "_view_module_version": "1.2.0",
+            "_view_name": "LayoutView",
+            "align_content": null,
+            "align_items": null,
+            "align_self": null,
+            "border": null,
+            "bottom": null,
+            "display": null,
+            "flex": null,
+            "flex_flow": null,
+            "grid_area": null,
+            "grid_auto_columns": null,
+            "grid_auto_flow": null,
+            "grid_auto_rows": null,
+            "grid_column": null,
+            "grid_gap": null,
+            "grid_row": null,
+            "grid_template_areas": null,
+            "grid_template_columns": null,
+            "grid_template_rows": null,
+            "height": null,
+            "justify_content": null,
+            "justify_items": null,
+            "left": null,
+            "margin": null,
+            "max_height": null,
+            "max_width": null,
+            "min_height": null,
+            "min_width": null,
+            "object_fit": null,
+            "object_position": null,
+            "order": null,
+            "overflow": null,
+            "overflow_x": null,
+            "overflow_y": null,
+            "padding": null,
+            "right": null,
+            "top": null,
+            "visibility": null,
+            "width": null
+          }
+        },
+        "230b845f81ba4bd9833fd39996ca727c": {
+          "model_module": "itkwidgets",
+          "model_module_version": "^0.32.3",
+          "model_name": "ViewerModel",
+          "state": {
+            "_custom_cmap": null,
+            "_dom_classes": [],
+            "_downsampling": false,
+            "_largest_roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "_model_module": "itkwidgets",
+            "_model_module_version": "^0.32.3",
+            "_model_name": "ViewerModel",
+            "_rendering_image": false,
+            "_reset_crop_requested": false,
+            "_scale_factors": {
+              "dtype": "uint8",
+              "shape": [
+                3
+              ]
+            },
+            "_view_count": null,
+            "_view_module": "itkwidgets",
+            "_view_module_version": "^0.32.3",
+            "_view_name": "ViewerView",
+            "annotations": true,
+            "axes": false,
+            "background": [
+              0.2196078431372549,
+              0.2196078431372549,
+              0.2196078431372549
+            ],
+            "blend_mode": "composite",
+            "camera": {
+              "dtype": "float32",
+              "shape": [
+                3,
+                3
+              ]
+            },
+            "channels": [],
+            "clicked_slice_point": null,
+            "cmap": null,
+            "geometries": [
+              {
+                "metadata": {
+                  "name": "Geometry 0"
+                },
+                "points": {
+                  "dataType": "Float32Array",
+                  "name": "_points",
+                  "numberOfComponents": 3,
+                  "size": 8115,
+                  "vtkClass": "vtkPoints"
+                },
+                "polys": {
+                  "dataType": "Uint32Array",
+                  "name": "_polys",
+                  "numberOfComponents": 1,
+                  "size": 21380,
+                  "vtkClass": "vtkCellArray"
+                },
+                "vtkClass": "vtkPolyData"
+              }
+            ],
+            "geometry_colors": {
+              "dtype": "float32",
+              "shape": [
+                1,
+                3
+              ]
+            },
+            "geometry_opacities": {
+              "dtype": "float32",
+              "shape": [
+                1
+              ]
+            },
+            "gradient_opacity": 0.2,
+            "interpolation": true,
+            "label_image_blend": 0.5,
+            "label_image_names": null,
+            "label_image_weights": null,
+            "layout": "IPY_MODEL_1c14cee214794f5d94cec8a8ea60a522",
+            "lut": "glasbey",
+            "mode": "v",
+            "opacity_gaussians": null,
+            "point_set_colors": {
+              "dtype": "float32",
+              "shape": [
+                0,
+                3
+              ]
+            },
+            "point_set_opacities": {
+              "dtype": "float32",
+              "shape": [
+                0
+              ]
+            },
+            "point_set_representations": [],
+            "point_set_sizes": {
+              "dtype": "uint8",
+              "shape": [
+                0
+              ]
+            },
+            "point_sets": [],
+            "rendered_image": null,
+            "rendered_label_image": null,
+            "roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "rotate": false,
+            "sample_distance": 0.25,
+            "select_roi": false,
+            "shadow": true,
+            "slicing_planes": false,
+            "ui_collapsed": true,
+            "units": "",
+            "vmax": null,
+            "vmin": null,
+            "x_slice": null,
+            "y_slice": null,
+            "z_slice": null
+          }
+        },
+        "2cb7ccf16ef8423b85a61bf3e4b5e304": {
+          "model_module": "@jupyter-widgets/base",
+          "model_module_version": "1.2.0",
+          "model_name": "LayoutModel",
+          "state": {
+            "_model_module": "@jupyter-widgets/base",
+            "_model_module_version": "1.2.0",
+            "_model_name": "LayoutModel",
+            "_view_count": null,
+            "_view_module": "@jupyter-widgets/base",
+            "_view_module_version": "1.2.0",
+            "_view_name": "LayoutView",
+            "align_content": null,
+            "align_items": null,
+            "align_self": null,
+            "border": null,
+            "bottom": null,
+            "display": null,
+            "flex": null,
+            "flex_flow": null,
+            "grid_area": null,
+            "grid_auto_columns": null,
+            "grid_auto_flow": null,
+            "grid_auto_rows": null,
+            "grid_column": null,
+            "grid_gap": null,
+            "grid_row": null,
+            "grid_template_areas": null,
+            "grid_template_columns": null,
+            "grid_template_rows": null,
+            "height": null,
+            "justify_content": null,
+            "justify_items": null,
+            "left": null,
+            "margin": null,
+            "max_height": null,
+            "max_width": null,
+            "min_height": null,
+            "min_width": null,
+            "object_fit": null,
+            "object_position": null,
+            "order": null,
+            "overflow": null,
+            "overflow_x": null,
+            "overflow_y": null,
+            "padding": null,
+            "right": null,
+            "top": null,
+            "visibility": null,
+            "width": null
+          }
+        },
+        "44bb8e5ef95e4b5cbc532ac43c69c1f9": {
+          "model_module": "itkwidgets",
+          "model_module_version": "^0.32.3",
+          "model_name": "ViewerModel",
+          "state": {
+            "_custom_cmap": null,
+            "_dom_classes": [],
+            "_downsampling": false,
+            "_largest_roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "_model_module": "itkwidgets",
+            "_model_module_version": "^0.32.3",
+            "_model_name": "ViewerModel",
+            "_rendering_image": false,
+            "_reset_crop_requested": false,
+            "_scale_factors": {
+              "dtype": "uint8",
+              "shape": [
+                3
+              ]
+            },
+            "_view_count": null,
+            "_view_module": "itkwidgets",
+            "_view_module_version": "^0.32.3",
+            "_view_name": "ViewerView",
+            "annotations": true,
+            "axes": false,
+            "background": [
+              0.2196078431372549,
+              0.2196078431372549,
+              0.2196078431372549
+            ],
+            "blend_mode": "composite",
+            "camera": {
+              "dtype": "float32",
+              "shape": [
+                3,
+                3
+              ]
+            },
+            "channels": [],
+            "clicked_slice_point": null,
+            "cmap": null,
+            "geometries": [
+              {
+                "metadata": {
+                  "name": "Geometry 0"
+                },
+                "pointData": {
+                  "activeScalars": 0,
+                  "arrays": [
+                    {
+                      "data": {
+                        "dataType": "Float64Array",
+                        "name": "Vector Potential",
+                        "numberOfComponents": 1,
+                        "size": 10754,
+                        "vtkClass": "vtkDataArray"
+                      }
+                    }
+                  ],
+                  "vtkClass": "vtkDataSetAttributes"
+                },
+                "points": {
+                  "dataType": "Float32Array",
+                  "name": "_points",
+                  "numberOfComponents": 3,
+                  "size": 32262,
+                  "vtkClass": "vtkPoints"
+                },
+                "polys": {
+                  "dataType": "Uint32Array",
+                  "name": "_polys",
+                  "numberOfComponents": 1,
+                  "size": 85520,
+                  "vtkClass": "vtkCellArray"
+                },
+                "vtkClass": "vtkPolyData"
+              }
+            ],
+            "geometry_colors": {
+              "dtype": "float32",
+              "shape": [
+                1,
+                3
+              ]
+            },
+            "geometry_opacities": {
+              "dtype": "float32",
+              "shape": [
+                1
+              ]
+            },
+            "gradient_opacity": 0.2,
+            "interpolation": true,
+            "label_image_blend": 0.5,
+            "label_image_names": null,
+            "label_image_weights": null,
+            "layout": "IPY_MODEL_93d78326d62e47549dbccffa0ef41358",
+            "lut": "glasbey",
+            "mode": "v",
+            "opacity_gaussians": null,
+            "point_set_colors": {
+              "dtype": "float32",
+              "shape": [
+                0,
+                3
+              ]
+            },
+            "point_set_opacities": {
+              "dtype": "float32",
+              "shape": [
+                0
+              ]
+            },
+            "point_set_representations": [],
+            "point_set_sizes": {
+              "dtype": "uint8",
+              "shape": [
+                0
+              ]
+            },
+            "point_sets": [],
+            "rendered_image": null,
+            "rendered_label_image": null,
+            "roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "rotate": false,
+            "sample_distance": 0.25,
+            "select_roi": false,
+            "shadow": true,
+            "slicing_planes": false,
+            "ui_collapsed": true,
+            "units": "",
+            "vmax": null,
+            "vmin": null,
+            "x_slice": null,
+            "y_slice": null,
+            "z_slice": null
+          }
+        },
+        "73ee08dba65b45bf900d12f1c269c975": {
+          "model_module": "@jupyter-widgets/base",
+          "model_module_version": "1.2.0",
+          "model_name": "LayoutModel",
+          "state": {
+            "_model_module": "@jupyter-widgets/base",
+            "_model_module_version": "1.2.0",
+            "_model_name": "LayoutModel",
+            "_view_count": null,
+            "_view_module": "@jupyter-widgets/base",
+            "_view_module_version": "1.2.0",
+            "_view_name": "LayoutView",
+            "align_content": null,
+            "align_items": null,
+            "align_self": null,
+            "border": null,
+            "bottom": null,
+            "display": null,
+            "flex": null,
+            "flex_flow": null,
+            "grid_area": null,
+            "grid_auto_columns": null,
+            "grid_auto_flow": null,
+            "grid_auto_rows": null,
+            "grid_column": null,
+            "grid_gap": null,
+            "grid_row": null,
+            "grid_template_areas": null,
+            "grid_template_columns": null,
+            "grid_template_rows": null,
+            "height": null,
+            "justify_content": null,
+            "justify_items": null,
+            "left": null,
+            "margin": null,
+            "max_height": null,
+            "max_width": null,
+            "min_height": null,
+            "min_width": null,
+            "object_fit": null,
+            "object_position": null,
+            "order": null,
+            "overflow": null,
+            "overflow_x": null,
+            "overflow_y": null,
+            "padding": null,
+            "right": null,
+            "top": null,
+            "visibility": null,
+            "width": null
+          }
+        },
+        "93d78326d62e47549dbccffa0ef41358": {
+          "model_module": "@jupyter-widgets/base",
+          "model_module_version": "1.2.0",
+          "model_name": "LayoutModel",
+          "state": {
+            "_model_module": "@jupyter-widgets/base",
+            "_model_module_version": "1.2.0",
+            "_model_name": "LayoutModel",
+            "_view_count": null,
+            "_view_module": "@jupyter-widgets/base",
+            "_view_module_version": "1.2.0",
+            "_view_name": "LayoutView",
+            "align_content": null,
+            "align_items": null,
+            "align_self": null,
+            "border": null,
+            "bottom": null,
+            "display": null,
+            "flex": null,
+            "flex_flow": null,
+            "grid_area": null,
+            "grid_auto_columns": null,
+            "grid_auto_flow": null,
+            "grid_auto_rows": null,
+            "grid_column": null,
+            "grid_gap": null,
+            "grid_row": null,
+            "grid_template_areas": null,
+            "grid_template_columns": null,
+            "grid_template_rows": null,
+            "height": null,
+            "justify_content": null,
+            "justify_items": null,
+            "left": null,
+            "margin": null,
+            "max_height": null,
+            "max_width": null,
+            "min_height": null,
+            "min_width": null,
+            "object_fit": null,
+            "object_position": null,
+            "order": null,
+            "overflow": null,
+            "overflow_x": null,
+            "overflow_y": null,
+            "padding": null,
+            "right": null,
+            "top": null,
+            "visibility": null,
+            "width": null
+          }
+        },
+        "c4830188a63541db8ffe90d717f45969": {
+          "model_module": "itkwidgets",
+          "model_module_version": "^0.32.3",
+          "model_name": "ViewerModel",
+          "state": {
+            "_custom_cmap": null,
+            "_dom_classes": [],
+            "_downsampling": false,
+            "_largest_roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "_model_module": "itkwidgets",
+            "_model_module_version": "^0.32.3",
+            "_model_name": "ViewerModel",
+            "_rendering_image": false,
+            "_reset_crop_requested": false,
+            "_scale_factors": {
+              "dtype": "uint8",
+              "shape": [
+                3
+              ]
+            },
+            "_view_count": null,
+            "_view_module": "itkwidgets",
+            "_view_module_version": "^0.32.3",
+            "_view_name": "ViewerView",
+            "annotations": true,
+            "axes": false,
+            "background": [
+              0.2196078431372549,
+              0.2196078431372549,
+              0.2196078431372549
+            ],
+            "blend_mode": "composite",
+            "camera": {
+              "dtype": "float32",
+              "shape": [
+                3,
+                3
+              ]
+            },
+            "channels": [],
+            "clicked_slice_point": null,
+            "cmap": null,
+            "geometries": [
+              {
+                "cellData": {
+                  "activeScalars": 0,
+                  "arrays": [
+                    {
+                      "data": {
+                        "dataType": "Float64Array",
+                        "name": "Subdomains",
+                        "numberOfComponents": 1,
+                        "size": 5345,
+                        "vtkClass": "vtkDataArray"
+                      }
+                    }
+                  ],
+                  "vtkClass": "vtkDataSetAttributes"
+                },
+                "metadata": {
+                  "name": "Geometry 0"
+                },
+                "points": {
+                  "dataType": "Float32Array",
+                  "name": "_points",
+                  "numberOfComponents": 3,
+                  "size": 8115,
+                  "vtkClass": "vtkPoints"
+                },
+                "polys": {
+                  "dataType": "Uint32Array",
+                  "name": "_polys",
+                  "numberOfComponents": 1,
+                  "size": 21380,
+                  "vtkClass": "vtkCellArray"
+                },
+                "vtkClass": "vtkPolyData"
+              }
+            ],
+            "geometry_colors": {
+              "dtype": "float32",
+              "shape": [
+                1,
+                3
+              ]
+            },
+            "geometry_opacities": {
+              "dtype": "float32",
+              "shape": [
+                1
+              ]
+            },
+            "gradient_opacity": 0.2,
+            "interpolation": true,
+            "label_image_blend": 0.5,
+            "label_image_names": null,
+            "label_image_weights": null,
+            "layout": "IPY_MODEL_2cb7ccf16ef8423b85a61bf3e4b5e304",
+            "lut": "glasbey",
+            "mode": "v",
+            "opacity_gaussians": null,
+            "point_set_colors": {
+              "dtype": "float32",
+              "shape": [
+                0,
+                3
+              ]
+            },
+            "point_set_opacities": {
+              "dtype": "float32",
+              "shape": [
+                0
+              ]
+            },
+            "point_set_representations": [],
+            "point_set_sizes": {
+              "dtype": "uint8",
+              "shape": [
+                0
+              ]
+            },
+            "point_sets": [],
+            "rendered_image": null,
+            "rendered_label_image": null,
+            "roi": {
+              "dtype": "float64",
+              "shape": [
+                2,
+                3
+              ]
+            },
+            "rotate": false,
+            "sample_distance": 0.25,
+            "select_roi": false,
+            "shadow": true,
+            "slicing_planes": false,
+            "ui_collapsed": true,
+            "units": "",
+            "vmax": null,
+            "vmin": null,
+            "x_slice": null,
+            "y_slice": null,
+            "z_slice": null
+          }
+        }
+      }
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
